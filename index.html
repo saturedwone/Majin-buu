@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Majin Buu: Conquista Multiversal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #game-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            border: 4px solid #ff3399;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px #ff3399;
+        }
+
+        h1 { color: #ff3399; font-size: 16px; line-height: 1.5; }
+        .saga-title { color: #ffcc00; font-size: 12px; margin-bottom: 20px; }
+
+        .arena {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border: 2px solid #555;
+            border-radius: 5px;
+            min-height: 180px;
+        }
+
+        .character { width: 45%; }
+        
+        .sprite {
+            font-size: 50px;
+            margin-bottom: 10px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes attackShake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .stats {
+            font-size: 10px;
+            text-align: left;
+            background: #000;
+            padding: 10px;
+            border: 1px solid #ff3399;
+        }
+
+        .bar-bg { background: #333; height: 12px; width: 100%; margin: 5px 0 10px 0; border: 1px solid #000; }
+        .hp-fill { background: #00ff00; height: 100%; width: 100%; transition: width 0.3s; }
+        .ki-fill { background: #00ffff; height: 100%; width: 0%; transition: width 0.3s; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #ff3399;
+            color: #000;
+            border: 2px solid #fff;
+            padding: 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) { background-color: #ff66b2; transform: scale(1.02); }
+        button:disabled { background-color: #444; color: #777; cursor: not-allowed; border-color: #333; }
+
+        #absorb-btn { background-color: #cc00ff; color: white; grid-column: span 2; padding: 15px;}
+        #absorb-btn:hover:not(:disabled) { background-color: #aa00cc; }
+        
+        .regen-btn { background-color: #33cc33; color: white; }
+        .regen-btn:hover:not(:disabled) { background-color: #44ff44; }
+
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #fff;
+            height: 120px;
+            font-size: 10px;
+            overflow-y: auto;
+            text-align: left;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .highlight { color: #ffcc00; }
+        .damage { color: #ff4444; }
+        .heal { color: #44ff44; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>MAJIN BUU: TERROR ABSOLUTO</h1>
+    <div class="saga-title" id="saga-title">Saga Actual: Preparación</div>
+    
+    <div class="arena">
+        <div class="character" id="buu">
+            <div class="sprite" id="buu-sprite">👿</div>
+            <div class="stats">
+                <div id="buu-name" style="color:#ff3399; margin-bottom:5px;">Majin Buu</div>
+                <div>HP: <span id="buu-hp-text">1000</span> / <span id="buu-maxhp-text">1000</span></div>
+                <div class="bar-bg"><div class="hp-fill" id="buu-hp-bar"></div></div>
+                <div>KI: <span id="buu-ki-text">0</span> / 100</div>
+                <div class="bar-bg"><div class="ki-fill" id="buu-ki-bar"></div></div>
+                <div>Poder Base: <span id="buu-dmg-text">50</span></div>
+            </div>
+        </div>
+
+        <div class="character" id="enemy">
+            <div class="sprite" id="enemy-sprite">❓</div>
+            <div class="stats">
+                <div id="enemy-name" style="color:#ffcc00; margin-bottom:5px;">Esperando...</div>
+                <div>HP: <span id="enemy-hp-text">0</span></div>
+                <div class="bar-bg"><div class="hp-fill" id="enemy-hp-bar"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="attack()">Golpe Físico (0 Ki)</button>
+        <button onclick="chargeKi()">Cargar Ki (+40 Ki)</button>
+        <button onclick="kiBlast()">Rayo Transfigurador (50 Ki)</button>
+        <button class="regen-btn" onclick="regenerate()">Regeneración (40 Ki)</button>
+        <button id="absorb-btn" onclick="absorb()" disabled>¡ABSORBER! (Enemigo < 30% HP)</button>
+    </div>
+
+    <div id="log">¡Despiertas de tu encierro! Es hora de convertir el multiverso en dulces.</div>
+</div>
+
+<script>
+    let buu = {
+        name: "Majin Buu",
+        hp: 1000, maxHp: 1000,
+        ki: 0, maxKi: 100,
+        baseDamage: 50
+    };
+
+    // ¡14 Combates! Desde Z hasta Super
+    const enemies = [
+        { name: "Dabura", hp: 300, maxHp: 300, damage: 20, sprite: "👹", saga: "Saga Buu (Tierra)" },
+        { name: "Gotenks SSJ3", hp: 600, maxHp: 600, damage: 50, sprite: "👦", saga: "Saga Buu (Templo)" },
+        { name: "Gohan Místico", hp: 1000, maxHp: 1000, damage: 90, sprite: "🥋", saga: "Saga Buu (Tierra)" },
+        { name: "Vegetto", hp: 2000, maxHp: 2000, damage: 150, sprite: "🤺", saga: "Saga Buu (Final)" },
+        { name: "Goku SSJ Dios", hp: 3500, maxHp: 3500, damage: 250, sprite: "🔴", saga: "Batalla de los Dioses" },
+        { name: "Freezer Dorado", hp: 5000, maxHp: 5000, damage: 350, sprite: "🦎", saga: "Resurrección de F" },
+        { name: "Hit", hp: 7500, maxHp: 7500, damage: 500, sprite: "👤", saga: "Torneo Universo 6" },
+        { name: "Goku Black (Rosé)", hp: 12000, maxHp: 12000, damage: 800, sprite: "🥀", saga: "Saga del Futuro" },
+        { name: "Vegetto Blue", hp: 20000, maxHp: 20000, damage: 1200, sprite: "🔵", saga: "Saga del Futuro" },
+        { name: "Jiren", hp: 35000, maxHp: 35000, damage: 2000, sprite: "👽", saga: "Torneo de Poder" },
+        { name: "Broly", hp: 55000, maxHp: 55000, damage: 3000, sprite: "🦍", saga: "Película Broly" },
+        { name: "Bills", hp: 90000, maxHp: 90000, damage: 5000, sprite: "🐱", saga: "Dioses de la Destrucción" },
+        { name: "Whis", hp: 200000, maxHp: 200000, damage: 10000, sprite: "👼", saga: "Los Ángeles" },
+        { name: "Daishinkan", hp: 500000, maxHp: 500000, damage: 25000, sprite: "👁️", saga: "El Gran Sacerdote" },
+        { name: "Zonozams (Zeno)", hp: 1000000, maxHp: 1000000, damage: 99999, sprite: "👑", saga: "Rey de Todo" }
+    ];
+
+    let currentEnemyIndex = 0;
+    let currentEnemy = {...enemies[0]};
+    let playerTurn = true;
+
+    function logMessage(msg) {
+        const log = document.getElementById('log');
+        log.innerHTML += `<br>> ${msg}`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function shakeSprite(id) {
+        let el = document.getElementById(id);
+        el.style.animation = 'none';
+        el.offsetHeight; // trigger reflow
+        el.style.animation = 'attackShake 0.4s';
+        setTimeout(() => el.style.animation = 'float 2s ease-in-out infinite', 400);
+    }
+
+    function updateUI() {
+        document.getElementById('saga-title').innerText = `SAGA: ${currentEnemy.saga} (${currentEnemyIndex + 1}/${enemies.length})`;
+        
+        // Buu UI
+        document.getElementById('buu-name').innerText = buu.name;
+        document.getElementById('buu-hp-text').innerText = Math.floor(buu.hp);
+        document.getElementById('buu-maxhp-text').innerText = buu.maxHp;
+        document.getElementById('buu-hp-bar').style.width = `${Math.max(0, (buu.hp / buu.maxHp) * 100)}%`;
+        document.getElementById('buu-ki-text').innerText = buu.ki;
+        document.getElementById('buu-ki-bar').style.width = `${(buu.ki / buu.maxKi) * 100}%`;
+        document.getElementById('buu-dmg-text').innerText = buu.baseDamage;
+
+        // Enemy UI
+        document.getElementById('enemy-name').innerText = currentEnemy.name;
+        document.getElementById('enemy-hp-text').innerText = Math.floor(currentEnemy.hp);
+        document.getElementById('enemy-sprite').innerText = currentEnemy.sprite;
+        document.getElementById('enemy-hp-bar').style.width = `${Math.max(0, (currentEnemy.hp / currentEnemy.maxHp) * 100)}%`;
+
+        // Absorb button
+        let absorbBtn = document.getElementById('absorb-btn');
+        if (currentEnemy.hp <= (currentEnemy.maxHp * 0.3) && currentEnemy.hp > 0) {
+            absorbBtn.disabled = false;
+            absorbBtn.innerText = "¡PUNTO DÉBIL! ¡ABSORBER AHORA!";
+        } else {
+            absorbBtn.disabled = true;
+            absorbBtn.innerText = "¡ABSORBER! (Enemigo < 30% HP)";
+        }
+    }
+
+    function enemyTurn() {
+        if (currentEnemy.hp <= 0) return;
+        playerTurn = false;
+        
+        setTimeout(() => {
+            let dmg = Math.floor(currentEnemy.damage * (0.8 + Math.random() * 0.4));
+            buu.hp -= dmg;
+            if (buu.hp < 0) buu.hp = 0;
+            
+            shakeSprite('buu-sprite');
+            logMessage(`<span class="damage">${currentEnemy.name} te ataca violentamente causando ${dmg} de daño.</span>`);
+            
+            updateUI();
+            
+            if (buu.hp === 0) {
+                logMessage("💀 ¡Has sido destruido! Refresca la página para reiniciar tu conquista.");
+                disableControls();
+            } else {
+                playerTurn = true;
+            }
+        }, 1200);
+    }
+
+    function attack() {
+        if (!playerTurn || buu.hp === 0) return;
+        let dmg = Math.floor(buu.baseDamage * (0.9 + Math.random() * 0.3));
+        currentEnemy.hp -= dmg;
+        
+        shakeSprite('enemy-sprite');
+        logMessage(`Estiras tu brazo y golpeas a ${currentEnemy.name} por <span class="highlight">${dmg}</span> de daño.`);
+        checkEnemyDeath();
+    }
+
+    function chargeKi() {
+        if (!playerTurn || buu.hp === 0) return;
+        buu.ki += 40;
+        if (buu.ki > buu.maxKi) buu.ki = buu.maxKi;
+        
+        logMessage(`<span class="highlight">Gritas y expulsas vapor. Tu Ki sube a ${buu.ki}.</span>`);
+        updateUI();
+        enemyTurn();
+    }
+
+    function regenerate() {
+        if (!playerTurn || buu.hp === 0) return;
+        if (buu.ki < 40) {
+            logMessage("No tienes suficiente Ki para regenerarte.");
+            return;
+        }
+        buu.ki -= 40;
+        let healAmount = Math.floor(buu.maxHp * 0.4); // Cura 40%
+        buu.hp += healAmount;
+        if (buu.hp > buu.maxHp) buu.hp = buu.maxHp;
+
+        logMessage(`<span class="heal">¡Tus heridas sanan al instante! Recuperas ${healAmount} HP.</span>`);
+        updateUI();
+        enemyTurn();
+    }
+
+    function kiBlast() {
+        if (!playerTurn || buu.hp === 0) return;
+        if (buu.ki < 50) {
+            logMessage("Ki insuficiente para el Rayo Transfigurador.");
+            return;
+        }
+
+        buu.ki -= 50;
+        let dmg = Math.floor(buu.baseDamage * 3.5); // Daño masivo
+        currentEnemy.hp -= dmg;
+
+        shakeSprite('enemy-sprite');
+        logMessage(`¡Lanzas un rayo rosa gigante! Causa <span class="highlight">${dmg}</span> de daño.`);
+        checkEnemyDeath();
+    }
+
+    function absorb() {
+        if (!playerTurn || buu.hp === 0) return;
+        
+        logMessage(`<span class="highlight">¡Lanzas una masa rosa que envuelve a ${currentEnemy.name} y lo ABSORBES!</span>`);
+        
+        // Power scaling bestial para aguantar hasta Zeno
+        buu.name = `Buu (${currentEnemy.name.split(' ')[0]})`;
+        buu.maxHp += currentEnemy.maxHp;
+        buu.hp = buu.maxHp; // Cura total
+        buu.baseDamage += Math.floor(currentEnemy.damage * 1.5); // Ganas gran parte de su daño
+        buu.ki = buu.maxKi;
+        
+        logMessage(`<span class="heal">¡Sientes el poder fluyendo! Tus estadísticas se han disparado.</span>`);
+        currentEnemy.hp = 0; // Muerto por absorción
+        nextSaga();
+    }
+
+    function checkEnemyDeath() {
+        updateUI();
+        if (currentEnemy.hp <= 0) {
+            logMessage(`¡Has aniquilado a ${currentEnemy.name}! (No ganaste sus poderes porque no lo absorbiste...)`);
+            nextSaga();
+        } else {
+            enemyTurn();
+        }
+    }
+
+    function nextSaga() {
+        currentEnemyIndex++;
+        playerTurn = false; // Pausa
+        if (currentEnemyIndex < enemies.length) {
+            setTimeout(() => {
+                currentEnemy = {...enemies[currentEnemyIndex]};
+                logMessage(`<br>--- <span class="highlight">NUEVA AMENAZA DETECTADA</span> ---`);
+                logMessage(`¡Se interpone en tu camino: ${currentEnemy.name}!`);
+                updateUI();
+                playerTurn = true;
+            }, 2500);
+        } else {
+            setTimeout(() => {
+                logMessage("<br><span class="highlight">👑 ¡HAS ABSORBIDO A ZONOZAMS (ZENO-SAMA)! 👑</span>");
+                logMessage("Todo ha sido asimilado. Eres la única entidad del multiverso. FIN DEL JUEGO.");
+                document.getElementById('buu-name').innerText = "DIOS BUU-ZENO";
+                document.getElementById('buu-sprite').innerText = "🌌";
+                disableControls();
+            }, 2500);
+        }
+    }
+
+    function disableControls() {
+        let btns = document.querySelectorAll('button');
+        btns.forEach(b => b.disabled = true);
+    }
+
+    // Inicializar el juego
+    logMessage(`--- <span class="highlight">COMIENZA LA PURGA</span> ---`);
+    logMessage(`Aparece ${currentEnemy.name}.`);
+    updateUI();
+</script>
+
+</body>
+  </html>
+  
