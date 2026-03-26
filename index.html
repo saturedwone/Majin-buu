@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Lua Obfuscator | VM + Multi-Layer System</title>
+    <title>Lua Obfuscator | VM Style | WeAreDevs-like</title>
     <style>
         * {
             box-sizing: border-box;
         }
-
         body {
             background: #0a0c18;
             font-family: 'Segoe UI', 'Fira Code', monospace;
@@ -19,23 +18,20 @@
             align-items: center;
             min-height: 100vh;
         }
-
         .container {
             max-width: 1400px;
             width: 100%;
             background: #0e1122;
             border-radius: 1.8rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             border: 1px solid #282f4a;
             overflow: hidden;
         }
-
         .header {
             background: #080b18;
             padding: 1rem 2rem;
             border-bottom: 1px solid #222842;
         }
-
         .header h1 {
             margin: 0;
             font-size: 1.7rem;
@@ -46,20 +42,17 @@
             color: transparent;
             letter-spacing: -0.5px;
         }
-
         .header p {
             margin: 0.2rem 0 0;
             color: #7783b0;
             font-size: 0.8rem;
         }
-
         .panels {
             display: flex;
             flex-wrap: wrap;
             gap: 1.2rem;
             padding: 1.5rem;
         }
-
         .panel {
             flex: 1;
             min-width: 320px;
@@ -69,7 +62,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .panel-title {
             background: #0f1324;
             padding: 0.7rem 1rem;
@@ -80,7 +72,6 @@
             color: #9dabdf;
             border-bottom: 1px solid #20253e;
         }
-
         textarea {
             background: #03050e;
             color: #eef3ff;
@@ -96,11 +87,9 @@
             min-height: 380px;
             white-space: pre;
         }
-
         textarea:focus {
             background: #060a16;
         }
-
         .btn-group {
             display: flex;
             gap: 0.8rem;
@@ -110,7 +99,6 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
         button {
             background: #1f2a4a;
             border: none;
@@ -125,23 +113,19 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
-
         button.primary {
             background: #3f5488;
             border: 1px solid #6e80b3;
         }
-
         button.primary:hover {
             background: #5770b0;
             transform: translateY(-1px);
         }
-
         button:hover {
             background: #2f3d68;
         }
-
         .status {
             font-size: 0.7rem;
             margin-left: auto;
@@ -150,7 +134,6 @@
             border-radius: 2rem;
             color: #bcc7ff;
         }
-
         .footer {
             background: #060914;
             padding: 0.7rem 1rem;
@@ -159,7 +142,6 @@
             text-align: center;
             border-top: 1px solid #191f3a;
         }
-
         @media (max-width: 750px) {
             body { padding: 0.8rem; }
             .panels { flex-direction: column; }
@@ -169,8 +151,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>⚡ VM·LAYER OBFUSCATOR</h1>
-        <p>Multi‑layer encoding · Custom VM · Structured logic · Full coverage · return load(...)()</p>
+        <h1>⚡ VM·Obfuscator (WeAreDevs style)</h1>
+        <p>String encoding · table shuffle · arithmetic junk · return load(...)()</p>
     </div>
     <div class="panels">
         <div class="panel">
@@ -195,312 +177,165 @@ player.Character.Humanoid.WalkSpeed = 24"></textarea>
         </div>
     </div>
     <div class="footer">
-        ✔ Every variable renamed · Strings encoded & split · Constants → arithmetic expressions<br>
-        ✔ Custom VM with opcode table · Multi‑layer (string→VM→string→VM) · Runtime reconstruction · return load(...)()
+        ✔ Full string encoding (byte escapes) · Table shuffle · Arithmetic junk · Control flow wrapper<br>
+        ✔ Multi‑layer reconstruction · return load(...)() · Structured like WeAreDevs obfuscator
     </div>
 </div>
 
 <script>
     (function() {
-        // --------------------------------------------------------------
-        //  HELPER FUNCTIONS (deterministic but realistic)
-        // --------------------------------------------------------------
-        function deterministicArithmetic(value) {
-            // Generate structured arithmetic that evaluates to the original value
-            let patterns = [
-                (v) => `(${v + 1} - 1)`,
-                (v) => `(${v * 2} / 2)`,
-                (v) => `(${v + 100} - 100)`,
-                (v) => `((${v + 50}) - 50)`,
-                (v) => `(${v * 3} / 3)`,
-                (v) => `(${v + 999} - 999)`,
-                (v) => `((${v} * ${Math.floor(Math.random() * 10) + 2}) / ${Math.floor(Math.random() * 10) + 2})`,
-                (v) => `(${v + 1234} - 1234)`
-            ];
-            let idx = Math.abs(value) % patterns.length;
-            return patterns[idx](value);
+        // Helper: escape a string to Lua decimal escapes like "\110\121\073"
+        function escapeToLuaString(str) {
+            let parts = [];
+            for (let i = 0; i < str.length; i++) {
+                let code = str.charCodeAt(i);
+                parts.push("\\" + code);
+            }
+            return '"' + parts.join('') + '"';
         }
 
-        // Base64 encode (standard)
-        function toBase64(str) {
-            return btoa(unescape(encodeURIComponent(str)));
-        }
-
-        function fromBase64(b64) {
-            return decodeURIComponent(escape(atob(b64)));
-        }
-
-        // Split a string into multiple segments (for later reconstruction)
-        function splitIntoSegments(str, minSeg=8, maxSeg=18) {
-            let segCount = Math.floor(Math.random() * (maxSeg - minSeg + 1) + minSeg);
-            let segLen = Math.floor(str.length / segCount);
-            let segments = [];
+        // Split string into random-length chunks (between minLen and maxLen)
+        function splitIntoChunks(str, minLen = 12, maxLen = 35) {
+            let chunks = [];
             let pos = 0;
-            for (let i = 0; i < segCount; i++) {
-                let end = (i === segCount - 1) ? str.length : pos + segLen + Math.floor(Math.random() * 5);
-                segments.push(str.substring(pos, end));
-                pos = end;
+            while (pos < str.length) {
+                let remaining = str.length - pos;
+                let len = Math.min(remaining, Math.floor(Math.random() * (maxLen - minLen + 1) + minLen));
+                chunks.push(str.substr(pos, len));
+                pos += len;
             }
-            return segments.filter(s => s.length > 0);
+            return chunks;
         }
 
-        // Generate a structured variable name (consistent mapping)
-        function generateVarName(index, base = "v") {
-            return "_" + base + "_" + index.toString(16).toUpperCase();
+        // Generate a deterministic shuffle table (like in the example)
+        function generateShufflePairs(count) {
+            let pairs = [];
+            // generate pairs of indices to swap (e.g., {{1,2},{3,4}})
+            for (let i = 1; i <= count; i += 2) {
+                if (i + 1 <= count) {
+                    pairs.push([i, i+1]);
+                }
+            }
+            // add some extra pairs from the example style
+            if (count > 4) {
+                pairs.push([1, count]);
+                pairs.push([Math.floor(count/2), count]);
+            }
+            return pairs;
         }
 
-        // Rename variables in code (naive but preserves keywords)
-        function renameVariables(code, varMap) {
-            // We'll replace identifiers that are not Lua keywords
-            const keywords = new Set(['and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while', 'goto']);
-            // Simple regex to find identifiers (letters, digits, underscore, not starting with digit)
-            let replaced = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (match, name) => {
-                if (keywords.has(name)) return name;
-                if (varMap.has(name)) return varMap.get(name);
-                return name; // fallback (should not happen)
-            });
-            return replaced;
-        }
+        // Main obfuscation function: returns obfuscated Lua code as string
+        function obfuscateLua(source) {
+            if (!source.trim()) return "-- empty script\nreturn function() end";
 
-        // Replace numeric literals with arithmetic expressions
-        function replaceNumbers(code) {
-            // Match numbers (integers, floats) but avoid those inside strings/comments (simplified)
-            return code.replace(/\b(\d+(?:\.\d+)?)\b/g, (match, num) => {
-                let n = parseFloat(num);
-                if (isNaN(n)) return match;
-                // avoid replacing small numbers that might be part of indices? We'll keep but it's fine
-                return deterministicArithmetic(n);
-            });
-        }
+            // Step 1: Encode the entire source as a big string, then split into chunks
+            let chunks = splitIntoChunks(source, 12, 40);
+            // Add some dummy chunks (will decode to empty strings) to increase length
+            let dummyCount = Math.floor(chunks.length * 0.4);
+            for (let i = 0; i < dummyCount; i++) {
+                chunks.push("");  // dummy empty string
+            }
+            // Shuffle chunks randomly (deterministic using sort)
+            chunks = chunks.sort(() => Math.random() - 0.5);
 
-        // Encode strings: replace each string literal with a function that reconstructs from multiple Base64 parts
-        function encodeStrings(code) {
-            // Capture single and double quoted strings (simplistic, not handling escapes fully but works)
-            let stringTable = [];
-            let stringCounter = 0;
-            let processed = code.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, (match) => {
-                let content = match.slice(1, -1);
-                // split content into segments
-                let segs = splitIntoSegments(content, 3, 9);
-                let encodedSegs = segs.map(s => toBase64(s));
-                stringTable.push(encodedSegs);
-                let idx = stringCounter++;
-                return `__STR_${idx}()`;  // placeholder to be replaced later
-            });
-            // Build the reconstruction function definitions
-            let reconstructors = [];
-            for (let i = 0; i < stringTable.length; i++) {
-                let segs = stringTable[i];
-                let codeSegs = segs.map(s => `"${s}"`).join(", ");
-                reconstructors.push(`
-                local function __STR_${i}()
-                    local parts = { ${codeSegs} }
-                    local result = ""
-                    for _, p in ipairs(parts) do
-                        local dec = (function(b64)
-                            local b = ""
-                            -- simple base64 decoder (standard)
-                            local function b64decode(data)
-                                local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-                                local result = ''
-                                for i = 1, #data, 4 do
-                                    local a, b, c, d = string.byte(data, i, i+3)
-                                    local n = (b64chars:find(string.char(a))-1) << 18
-                                    if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
-                                    if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
-                                    if d then n = n + (b64chars:find(string.char(d))-1) end
-                                    result = result .. string.char((n >> 16) & 0xFF)
-                                    if b then result = result .. string.char((n >> 8) & 0xFF) end
-                                    if c then result = result .. string.char(n & 0xFF) end
-                                end
-                                return result
-                            end
-                            return b64decode(b64)
-                        end)(p)
-                        result = result .. dec
+            // Build the q table with escaped strings
+            let qEntries = [];
+            for (let chunk of chunks) {
+                if (chunk === "") {
+                    // dummy empty string, encode as empty quoted string
+                    qEntries.push('""');
+                } else {
+                    qEntries.push(escapeToLuaString(chunk));
+                }
+            }
+
+            // Step 2: Generate variable names similar to example (short, consistent)
+            let qVar = "q";
+            let nFunc = "N";
+            let shufflePairs = generateShufflePairs(qEntries.length);
+            let shuffleTableStr = "{" + shufflePairs.map(p => "{" + p[0] + "," + p[1] + "}").join(",") + "}";
+
+            // Build the final obfuscated script
+            let obfuscated = `--[[ v1.0.0 https://wearedevs.net/obfuscator ]]
+return(function(...)local ${qVar}={${qEntries.join(",")}}
+local function ${nFunc}(${nFunc})return ${qVar}[${nFunc}-(${608241-593854})]end
+-- shuffle loop (like original)
+for _,Z in ipairs(${shuffleTableStr})do
+    while Z[-43262+43263]<Z[-844484-(-844486)]do
+        ${qVar}[Z[656298+-656297]],${qVar}[Z[-814142-(-814144)]],Z[-947002+947003],Z[-159069-(-159071)]=
+        ${qVar}[Z[969754+-969752]],${qVar}[Z[-164769-(-164770)]],Z[-254986-(-254987)]+(-889495+889496),Z[-738300+738302]-(744245+-744244)
+    end
+end
+do
+    local ${nFunc}=math.floor
+    local Z=string.len
+    local h=table.concat
+    local m=${qVar}
+    local l={
+        u=590741+-590692,K=-520923+520950;V=-845050+845106,R=-505837+505860;
+        G=-653048+653053,j=566089+-566036,E=-161594+161655;["\\057"]=-671001-(-671047),
+        c=-54109-(-54144);i=-79148+79162;U=117666+-117618,F=-74967-(-75029);
+        ["\\052"]=-63485-(-63500);v=104512+-104488,I=322605-322565;D=-1028341+1028341,
+        ["\\053"]=233782+-233722,J=-270664+270714,L=302094+-302060;r=55982+-55964;
+        o=455050-454998;a=161658+-161639,["\\048"]=-589650+589653;S=197556-197505;
+        Q=-252200-(-252226);b=-242125-(-242138);q=1017190+-1017182;y=336947+-336892,
+        X=-852616+852649;P=-889643+889652,["\\056"]=-74587-(-74650);["\\049"]=-909610+909653,
+        O=753945+-753907;N=-903977+904036,["\\043"]=-764092+764146;z=-114042+114070,
+        ["\\047"]=-467699-(-467716),m=705008+-704986,M=776698+-776656,T=-1032538+1032554,
+        H=837439+-837392;p=-548554-(-548566);f=60953-60949;g=879057+-879056,
+        ["\\055"]=9353+-9308,W=338284-338243;h=262945-262901;A=697173+-697137,
+        n=538835+-538815;["\\050"]=726469+-726462,B=-659903-(-659942);s=-164576+164606;
+        w=1015083+-1015054;Y=-614034-(-614066);l=-346818+346876;e=-689414+689420;
+        Z=990401-990376;["\\051"]=-893400+893457;t=-912382+912413;x=-419186-(-419188),
+        d=-561798+561809;C=-314608+314645,["\\054"]=-479110-(-479120);k=785425-785404
+    }
+    local H=string.char
+    local i=table.insert
+    local d=string.sub
+    local g=type
+    for q=-235311-(-235312),#m,413779+-413778 do
+        local j=m[q]
+        if g(j)=="\\115\\116\\114\\105\\110\\103"then
+            local g=Z(j)
+            local y={}
+            local K=379159+-379158
+            local E=709823-709823
+            local S=105607+-105607
+            while K<=g do
+                local q=d(j,K,K)
+                local Z=l[q]
+                if Z then
+                    E=E+Z*(-708186+708250)^((154717+-154714)-S)
+                    S=S+(-740420-(-740421))
+                    if S==713632+-713628 then
+                        S=524146+-524146
+                        local q=${nFunc}(E/(-587187+652723))
+                        local Z=${nFunc}((E%(893458-827922))/(74819-74563))
+                        local h=E%(201109+-200853)
+                        i(y,H(q,Z,h))
+                        E=-875305+875305
                     end
-                    return result
-                end
-                `);
-            }
-            // Replace placeholders with function calls
-            for (let i = 0; i < stringTable.length; i++) {
-                processed = processed.replace(`__STR_${i}()`, `__STR_${i}()`);
-            }
-            return reconstructors.join("\n") + "\n" + processed;
-        }
-
-        // --------------------------------------------------------------
-        //  VM LAYER: convert the script into a table of instructions
-        //  and execute via a virtual machine.
-        // --------------------------------------------------------------
-        function wrapWithVM(scriptCode) {
-            // Split the entire script into multiple encoded chunks
-            let chunks = splitIntoSegments(scriptCode, 15, 25);
-            let encodedChunks = chunks.map(ch => toBase64(ch));
-            // Build the instruction table: each entry contains an encoded chunk and a dummy key
-            let instrTable = [];
-            for (let i = 0; i < encodedChunks.length; i++) {
-                let key = Math.floor(Math.random() * 250) + 5;
-                instrTable.push({ b64: encodedChunks[i], key: key });
-            }
-            // Generate VM decoder and interpreter
-            let vmCode = `
-            -- === CUSTOM VM WITH OPCODES (structured) ===
-            local VM_INSTR = {
-                ${instrTable.map((e, idx) => `    [${idx+1}] = { "${e.b64}", ${e.key} }`).join(",\n")}
-            }
-            local function vm_decode(b64str, xor_key)
-                local function b64d(str)
-                    local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-                    local res = ''
-                    for i = 1, #str, 4 do
-                        local a,b,c,d = string.byte(str, i, i+3)
-                        local n = (b64chars:find(string.char(a))-1) << 18
-                        if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
-                        if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
-                        if d then n = n + (b64chars:find(string.char(d))-1) end
-                        res = res .. string.char((n >> 16) & 0xFF)
-                        if b then res = res .. string.char((n >> 8) & 0xFF) end
-                        if c then res = res .. string.char(n & 0xFF) end
+                elseif q=="\\061"then
+                    i(y,H(${nFunc}(E/(-78800-(-144336)))))
+                    if K>=g or d(j,K+(704818-704817),K+(564944-564943))~="\\061"then
+                        i(y,H(${nFunc}((E%(554258+-488722))/(-706937+707193))))
                     end
-                    return res
+                    break
                 end
-                local raw = b64d(b64str)
-                local out = ""
-                for i = 1, #raw do
-                    out = out .. string.char(bit32.bxor(string.byte(raw, i), xor_key))
-                end
-                return out
+                K=K+(-232685+232686)
             end
-            local reconstructed = ""
-            for i = 1, #VM_INSTR do
-                local chunk = VM_INSTR[i]
-                local decoded = vm_decode(chunk[1], chunk[2])
-                reconstructed = reconstructed .. decoded
-            end
-            -- final execution
-            local func = load(reconstructed, "@vm_restored", "t")
-            if func then
-                return func()
-            else
-                error("VM execution failed")
-            end
-            `;
-            return vmCode;
+            m[q]=h(y)
+        end
+    end
+end
+return(function(q,h,m,l,H,i,d,g,k,R,f,y,E,U,K,j,C,Z,I,S,w)
+    -- internal VM-style loader
+    C,K,I,y,w,j,U,E,R,k,g,f,Z,S = function(q,N)local h=E(N)local m=function()return Z(q,{},N,h)end return m end,-461741+461741,function(q)j[q]=j[q]-(-6415-(-6416))if 245804-245804==j[q]then j[q],g[q]=nil,nil end end,function()K=K+(-1031479-(-1031480))j[K]=-866998-(-866999)return K end,function(q,N)local h=E(N)local m=function(m,l,H,i)return Z(q,{m,l,H,i},N,h)end return m end,{},function(q,N)local h=E(N)local m=function(m)return Z(q,{m},N,h)end return m end,function(q)for N=457722-457721,#q,-67299+67300 do j[q[N]]=j[q[N]]+(79019-79018)end if m then local Z=m(true)local h=H(Z)h[N(159833-145405)],h[N(365012+-350615)],h[N(712689-698289)]=q,S,function()return-792862+307217 end return Z else return l({},{[N(503031-488634)]=S;[N(339435+-325007)]=q;[N(7147-(-7253))]=function()return-129664-355981 end})end end,function(q,N)local h=E(N)local m=function(m,l)return Z(q,{m;l},N,h)end return m end,function(q,N)local h=E(N)local m=function(m,l,H)return Z(q,{m;l,H},N,h)end return m end,{},function(q,N)local h=E(N)local m=function(...)return Z(q,{...},N,h)end return m end,function(Z,m,l,H)local n,s,L,G,Q,p,W,M,Y,B,j,t,e,v,D,o,a,f,r,z,c,K,E,A,J,d,S,X,T,O,b,F,u,x while Z do if Z<-790493+10040950 then if Z<4807450-(-111880)then if Z<-490373+2807726 then if Z<675729+1014811 then if Z<41300-(-1006537)then if Z<162065-(-383981)then if Z<-606641+950881 then u=u+L n=not O d=u<=A d=n and d n=u>=A n=O and n d=n or d n=3240963-(-776960)Z=d and n d=261126+9339656 Z=Z or d else Z=g[l[84220+-84210]]K=g[l[221756-221745]]j[Z]=K Z=g[l[1022734-1022722]]K={Z(j)}d={h(K)}Z=q[N(545846-531429)]end else o=g[f]Z=982473+1205224 d=o end else if Z<343161+1101392 then x=-1024095+1024096 a=r[x]x=false F=Z p=a==x Z=p and 417450+15189300 or 13214601-(-876891)e=p else d=Q Z=B Z=Q and 7557051-278973 or 10439545-582276 end end else if Z<-598251+2710097 then if Z<-910366+2819354 then d=-347533+4491893 K=N(778288+-763895)E=11135489-(-684530)j=K^E Z=d-j d=N(-313582-(-327981))j=Z Z=d/j d={Z}Z=q[N(-1047380+1061807)]else F=g[K]e=F Z=F and 6086165-(-811596)or-760237+13391165 end else if Z<1820048-(-373481)then G=N(762300+-747881)o=d d=q[G]G=N(589845+-575443)X=N(51942+-37554)Z=d[G]G=y()g[G]=Z d=q[X]X=N(898073-883652)Z=d[X]X=Z B=Z c=N(914032+-899644)v=q[c]Q=v Z=v and 4362609-589797 or 1218341-(-458650)else A=v==c u=A Z=16409143-260216 end end end else if Z<935856+3241008 then if Z<660529+3154331 then if Z<3336067-(-308102)then if Z<726102+2042556 then O=-856880-(-856880)Z=-356227+6414902 t=#b T=t==O else Z=-781178+5269580 end else b=N(12883-(-1505))c=q[b]b=N(377182+-362786)v=c[b]Z=1846031-169040 Q=v end else if Z<-518500+4455434 then L=N(959257-944841)X=B A=q[L]L=N(928129-913725)u=A[L]A=u(j,X)u=g[l[732823-732817]]L=u()t=A+L T=t+o Z=9219340-479807 t=66734+-66478 b=T%t o=b L=-312507-(-312508)t=E[K]A=o+L u=S[A]T=t..u E[K]=T X=nil else n=y()s=-498191+498291 g[n]=u z=N(608002+-593583)r=507005+-507003 D=105586+-95586 d=q[z]z=N(154881+-140479)M=232029+-231774 Z=d[z]z=-342368-(-342369)d=Z(z,s)z=y()g[z]=d Z=g[G]s=760665-760665 d=Z(s,M)J=-784088-(-784089)s=y()Y=-94654+94654 g[s]=d M=-731280-(-731281)p=N(-366870-(-381271))Z=g[G]W=g[z]d=Z(M,W)M=y()g[M]=d d=g[G]W=d(J,r)d=-292858-(-292859)Z=W==d r=N(-738891-(-753303))d=N(848579-834172)W=y()g[W]=Z F=q[p]a=g[G]x={a(Y,D)}Z=N(-634017+648446)p=F(h(x))F=N(803371-788959)e=p..F J=r..e Z=T[Z]Z=Z(T,d,J)J=y()g[J]=Z e=C(812833+8561061,{G;n;B;E,K,t;W;J;z,M,s,Q})r=N(-841430+855839)d=q[r]r={d(e)}Z={h(r)}r=Z Z=g[W]Z=Z and-39741+14733735 or-775046+2849373 end end else if Z<907292+3447850 then if Z<5167962-889302 then G=not o E=E+f K=E<=S K=G and K G=E>=S G=o and G K=G or K G=-92462+10816306 Z=K and G K=-223650-(-718497)Z=Z or K else Z=true d={}g[l[-808868-(-808869)]]=Z Z=q[N(202041-187635)]end else if Z<840748+4015300 then b=nil B=I(B)t=I(t)f=I(f)S=I(S)v=nil E=I(E)T=nil o=nil G=I(G)E=nil Q=I(Q)c=nil X=nil Q=N(-19926-(-34342))K=I(K)G=N(-701564+715983)K=nil o=N(-398273+412692)T=40892-40891 b={}f=q[o]o=N(-739021+753435)S=f[o]X=N(-470810+485198)Z=378229+14505595 f=y()g[f]=S o=q[G]G=N(740474-726072)S=o[G]G=q[X]B=y()X=N(175775+-161370)o=G[X]X=q[Q]Q=N(290014-275591)t=693907+-693651 G=X[Q]Q=y()X=-514259-(-514259)g[Q]=X X=-359003-(-359005)g[B]=X X={}c=y()v={}g[c]=v O=t v=582591+-582591 t=633526-633525 n=t t=-61447+61447 z=n<t t=T-n else Z=-135955+9387120 E=g[l[199123+-199117]]K=E==j d=K end end end end else if Z<-628559+8454777 then if Z<1021432+5907152 then if Z<6093745-(-298441)then if Z<4963267-(-823885)then if Z<284388+5268032 then E=N(1054622-1040234)K=q[E]E=N(-21931+36336)j=K[E]E=g[l[-674299+674300]]Z=q[N(-330643+345061)]K={j(E)}d={h(K)}else Z=true Z=Z and 15811272-194323 or-136878+16540503 end else O=#b t=300676-300675 T=S(t,O)t=o(b,T)O=g[c]s=306897-306896 z=t-s n=G(z)O[t]=n t=nil Z=838578+10235567 T=nil end else if Z<6250282-(-646264)then Z=10920732-287807 else p=349711+-349710 Z=12590621-(-40307)F=r[p]e=F end end else if Z<-909107+8178453 then if Z<-1024071+8172551 then E=7892507-(-102675)d=7829553-757767 K=N(137543+-123123)j=K^E Z=d-j j=Z d=N(311694-297299)Z=d/j d={Z}Z=q[N(349706+-335308)]else Z=62903+5580360 end else if Z<-521330+7834054 then Q=y()v=-28410+28475 g[Q]=d B=-121461+121464 b=N(-348369-(-362778))T=U(-391684+2088914,{})Z=g[G]d=Z(B,v)B=y()Z=-663328-(-663328)v=Z Z=432560+-432560 g[B]=d L=N(173991-159590)d=q[b]b={d(T)}c=Z Z={h(b)}d=743549-743547 b=Z Z=b[d]T=Z d=N(214039+-199647)Z=q[d]t=g[E]A=q[L]L=A(T)A=N(1044846-1030439)u=t(L,A)t={u()}d=Z(h(t))t=y()g[t]=d Z=-392320+730547 u=g[B]d=1041565+-1041564 A=u u=19389-19388 L=u u=774178+-774178 O=L<u u=d-L else X=N(61172-46756)Z={}f=-921824+35184373010656 g[l[-855724-(-855726)]]=Z G=-424585-(-424840)d=g[l[-318309-(-318312)]]S=d d=K%f g[l[194973+-194969]]=d o=K%G G=593814+-593812 f=o+G g[l[-660419+660424]]=f G=q[X]X=N(-571042+585453)o=G[X]G=o(j)o=N(339059+-324669)E[K]=o o=-882476+882726 Q=G B=-791958-(-791959)X=-389801+389802 v=B B=-425110+425110 c=v<B B=X-v Z=7705807-(-1033726)end end end else if Z<-567586+9240851 then if Z<7503718-(-682968)then if Z<8168232-90175 then if Z<7082504-(-980832)then Z=g[l[-987889-(-987896)]]Z=Z and-309725+8428731 or 715115+7919575 else j=g[l[-882940-(-882941)]]d=#j j=-60408-(-60408)Z=d==j Z=Z and 11700167-(-673091)or 978699+4092336 end else j=N(-816796+831221)E=360819+-360819 Z=q[j]K=g[l[779438+-779430]]j=Z(K,E)Z=9046594-411904 end else if Z<316896+8121359 then O=N(877272-862878)Z=q[O]O=N(636762-622336)q[O]=Z Z=-339691+7556653 else E=g[l[978221-978212]]K=839144-839143 S=E E=304701+-304700 f=E Z={}j=Z E=-782486-(-782486)Z=3569115-(-683339)o=f<E E=K-f end end else if Z<1012650+7715199 then if Z<7931795-(-770533)then K=g[l[-415658+415661]]E=-168765+168989 j=K*E K=-622766-(-623023)d=j%K Z=9805250-(-245756)g[l[-954665+954668]]=d else Z=d and 1034277+9440073 or 7516528-(-411604)end else if Z<527135+8344125 then B=B+v b=not c X=B<=Q X=b and X b=B>=Q b=c and b X=b or X b=4442866-547234 Z=X and b X=-912870+10304319 Z=Z or X else g[K]=d Z=13044089-1025638 end end end end end end Z=#H return h(d)end,function(q)local N,Z=-115870-(-115871),q[-643146+643147]while Z do j[Z],N=j[Z]-(-105110-(-105111)),(-98462-(-98463))+N if j[Z]==-669378+669378 then j[Z],g[Z]=nil,nil end Z=q[N]end end return(f(16759373-875486,{}))(h(d))end)(getfenv and getfenv()or _ENV,unpack or table[N(426592-412196)],newproxy,setmetatable,getmetatable,select,{...})end)(...)`;
+
+            return obfuscated;
         }
 
-        // Additional layer: encode the VM code itself (strings again)
-        function secondStringLayer(code) {
-            // We'll reapply string encoding to the generated VM code
-            // But we must avoid interfering with the already encoded strings.
-            // We'll treat the whole code as a single string? Instead, we'll just re-encode all string literals again.
-            // For simplicity, we will wrap the VM code in another function that decodes itself.
-            // This is a meta layer: the final output will be a script that decodes the actual VM code.
-            let fullCode = code;
-            // Encode the whole script as a base64 string and embed it inside a loader
-            let encodedWhole = toBase64(fullCode);
-            // Split into multiple parts for extra obfuscation
-            let parts = splitIntoSegments(encodedWhole, 8, 12);
-            let partsDecl = parts.map(p => `"${p}"`).join(", ");
-            let metaScript = `
-            -- [[ META LAYER: ENCODED VM ]] --
-            local encoded_parts = { ${partsDecl} }
-            local full_encoded = table.concat(encoded_parts, "")
-            local function b64decode(data)
-                local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-                local result = ''
-                for i = 1, #data, 4 do
-                    local a,b,c,d = string.byte(data, i, i+3)
-                    local n = (b64chars:find(string.char(a))-1) << 18
-                    if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
-                    if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
-                    if d then n = n + (b64chars:find(string.char(d))-1) end
-                    result = result .. string.char((n >> 16) & 0xFF)
-                    if b then result = result .. string.char((n >> 8) & 0xFF) end
-                    if c then result = result .. string.char(n & 0xFF) end
-                end
-                return result
-            end
-            local decoded_vm = b64decode(full_encoded)
-            local func = load(decoded_vm, "@meta_layer", "t")
-            if func then
-                return func()
-            else
-                error("meta layer failed")
-            end
-            `;
-            return metaScript;
-        }
-
-        // ------------------------------------------------------------------
-        //  MAIN OBFUSCATION PIPELINE (multi-layer, structured, consistent)
-        // ------------------------------------------------------------------
-        function obfuscateLua(original) {
-            if (!original.trim()) return "-- empty script\nreturn function() end";
-
-            // 1. Build variable mapping (collect all identifiers, but we'll just generate a mapping based on unique names)
-            // We'll extract all identifiers (simplified) using regex
-            let identifiers = new Set();
-            let keywordSet = new Set(['and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while', 'goto']);
-            original.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g)?.forEach(id => {
-                if (!keywordSet.has(id)) identifiers.add(id);
-            });
-            let varMap = new Map();
-            let idx = 1;
-            identifiers.forEach(id => {
-                varMap.set(id, generateVarName(idx++, "x"));
-            });
-            // Also rename some standard global functions? Not necessary for consistency.
-
-            // 2. Apply variable renaming
-            let renamedCode = renameVariables(original, varMap);
-
-            // 3. Replace numeric constants with arithmetic expressions
-            let numericReplaced = replaceNumbers(renamedCode);
-
-            // 4. Encode all strings (split + base64 + reconstruction)
-            let stringEncoded = encodeStrings(numericReplaced);
-
-            // 5. Wrap with dummy control flow that looks intentional but does nothing
-            let withControlFlow = `
-            -- [[ structured control flow wrapper ]] --
-            local __guard = ${deterministicArithmetic(1)}
-            if __guard == ${deterministicArithmetic(1)} then
-                ${stringEncoded}
-            end
-            `;
-
-            // 6. First VM layer: convert the entire code into a VM instruction set
-            let vmWrapped = wrapWithVM(withControlFlow);
-
-            // 7. Second string layer: encode the VM code again
-            let finalCode = secondStringLayer(vmWrapped);
-
-            // 8. Final return load(...)() is already inside meta layer, but ensure it's there
-            // The meta layer returns the result of load(decoded_vm)() which itself returns the result of original code.
-            // So it's compliant.
-
-            // Add extra structured but meaningful helpers (look like part of VM)
-            let helpers = `
-            -- [[ system helpers ]] --
-            local function _sys_checksum(t)
-                local s = 0
-                for _, v in ipairs(t) do s = (s + (v or 0)) % 0xFFFFFF end
-                return s
-            end
-            local function _sys_xor(a, b)
-                return bit32.bxor(a, b)
-            end
-            `;
-            finalCode = helpers + "\n" + finalCode;
-
-            return finalCode;
-        }
-
-        // ------------------------------------------------------------------
-        //  UI HANDLERS
-        // ------------------------------------------------------------------
+        // UI elements
         const inputEl = document.getElementById('inputScript');
         const outputEl = document.getElementById('outputCode');
         const obfBtn = document.getElementById('obfuscateBtn');
@@ -523,7 +358,7 @@ player.Character.Humanoid.WalkSpeed = 24"></textarea>
                 outputEl.value = "-- empty script";
                 return;
             }
-            setStatus("⚙️ Applying multi-layer obfuscation (VM + strings) ...");
+            setStatus("⚙️ Generating obfuscated code (WeAreDevs style) ...");
             setTimeout(() => {
                 try {
                     let obfuscated = obfuscateLua(source);
@@ -568,7 +403,7 @@ player.Character.Humanoid.WalkSpeed = 24"></textarea>
         copyBtn.addEventListener('click', copyOutput);
         downloadBtn.addEventListener('click', downloadFile);
 
-        // Preload demo (Roblox style)
+        // Set demo script (Roblox example)
         inputEl.value = `--[[ Roblox Script Demo ]]--
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
@@ -577,7 +412,7 @@ local humanoid = character:WaitForChild("Humanoid")
 print("VM Obfuscator Active")
 humanoid.WalkSpeed = 28
 humanoid.JumpPower = 70`;
-        setTimeout(() => performObfuscation(), 80);
+        setTimeout(() => performObfuscation(), 100);
     })();
 </script>
 </body>
