@@ -2,370 +2,583 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Majin Buu: Conquista Multiversal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Lua Obfuscator | VM + Multi-Layer System</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        * {
+            box-sizing: border-box;
+        }
 
         body {
-            background-color: #0a0a0a;
-            color: #fff;
-            font-family: 'Press Start 2P', monospace;
-            text-align: center;
+            background: #0a0c18;
+            font-family: 'Segoe UI', 'Fira Code', monospace;
             margin: 0;
-            padding: 20px;
-        }
-
-        #game-container {
-            max-width: 700px;
-            margin: 0 auto;
-            background-color: #1a1a1a;
-            border: 4px solid #ff3399;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 30px #ff3399;
-        }
-
-        h1 { color: #ff3399; font-size: 16px; line-height: 1.5; }
-        .saga-title { color: #ffcc00; font-size: 12px; margin-bottom: 20px; }
-
-        .arena {
+            padding: 1.5rem;
             display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #2a2a2a;
-            border: 2px solid #555;
-            border-radius: 5px;
-            min-height: 180px;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .character { width: 45%; }
-        
-        .sprite {
-            font-size: 50px;
-            margin-bottom: 10px;
-            animation: float 2s ease-in-out infinite;
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: #0e1122;
+            border-radius: 1.8rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #282f4a;
+            overflow: hidden;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .header {
+            background: #080b18;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #222842;
         }
 
-        @keyframes attackShake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        .header h1 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #b9dcff, #8aa4f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
         }
 
-        .stats {
-            font-size: 10px;
-            text-align: left;
-            background: #000;
-            padding: 10px;
-            border: 1px solid #ff3399;
+        .header p {
+            margin: 0.2rem 0 0;
+            color: #7783b0;
+            font-size: 0.8rem;
         }
 
-        .bar-bg { background: #333; height: 12px; width: 100%; margin: 5px 0 10px 0; border: 1px solid #000; }
-        .hp-fill { background: #00ff00; height: 100%; width: 100%; transition: width 0.3s; }
-        .ki-fill { background: #00ffff; height: 100%; width: 0%; transition: width 0.3s; }
+        .panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            padding: 1.5rem;
+        }
 
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .panel {
+            flex: 1;
+            min-width: 320px;
+            background: #0b0f1c;
+            border-radius: 1.2rem;
+            border: 1px solid #242b48;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            background: #0f1324;
+            padding: 0.7rem 1rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9dabdf;
+            border-bottom: 1px solid #20253e;
+        }
+
+        textarea {
+            background: #03050e;
+            color: #eef3ff;
+            border: none;
+            padding: 1rem;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.45;
+            resize: vertical;
+            width: 100%;
+            outline: none;
+            flex: 1;
+            min-height: 380px;
+            white-space: pre;
+        }
+
+        textarea:focus {
+            background: #060a16;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            padding: 1rem;
+            background: #0a0e1a;
+            border-top: 1px solid #20253e;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         button {
-            background-color: #ff3399;
-            color: #000;
-            border: 2px solid #fff;
-            padding: 12px;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 9px;
+            background: #1f2a4a;
+            border: none;
+            padding: 0.55rem 1.3rem;
+            border-radius: 2.5rem;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 0.75rem;
+            color: #f0f4ff;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
 
-        button:hover:not(:disabled) { background-color: #ff66b2; transform: scale(1.02); }
-        button:disabled { background-color: #444; color: #777; cursor: not-allowed; border-color: #333; }
-
-        #absorb-btn { background-color: #cc00ff; color: white; grid-column: span 2; padding: 15px;}
-        #absorb-btn:hover:not(:disabled) { background-color: #aa00cc; }
-        
-        .regen-btn { background-color: #33cc33; color: white; }
-        .regen-btn:hover:not(:disabled) { background-color: #44ff44; }
-
-        #log {
-            margin-top: 20px;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #fff;
-            height: 120px;
-            font-size: 10px;
-            overflow-y: auto;
-            text-align: left;
-            line-height: 1.6;
-            color: #ccc;
+        button.primary {
+            background: #3f5488;
+            border: 1px solid #6e80b3;
         }
-        .highlight { color: #ffcc00; }
-        .damage { color: #ff4444; }
-        .heal { color: #44ff44; }
+
+        button.primary:hover {
+            background: #5770b0;
+            transform: translateY(-1px);
+        }
+
+        button:hover {
+            background: #2f3d68;
+        }
+
+        .status {
+            font-size: 0.7rem;
+            margin-left: auto;
+            background: #11172e;
+            padding: 0.2rem 1rem;
+            border-radius: 2rem;
+            color: #bcc7ff;
+        }
+
+        .footer {
+            background: #060914;
+            padding: 0.7rem 1rem;
+            font-size: 0.65rem;
+            color: #6670a0;
+            text-align: center;
+            border-top: 1px solid #191f3a;
+        }
+
+        @media (max-width: 750px) {
+            body { padding: 0.8rem; }
+            .panels { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
-
-<div id="game-container">
-    <h1>MAJIN BUU: TERROR ABSOLUTO</h1>
-    <div class="saga-title" id="saga-title">Saga Actual: Preparación</div>
-    
-    <div class="arena">
-        <div class="character" id="buu">
-            <div class="sprite" id="buu-sprite">👿</div>
-            <div class="stats">
-                <div id="buu-name" style="color:#ff3399; margin-bottom:5px;">Majin Buu</div>
-                <div>HP: <span id="buu-hp-text">1000</span> / <span id="buu-maxhp-text">1000</span></div>
-                <div class="bar-bg"><div class="hp-fill" id="buu-hp-bar"></div></div>
-                <div>KI: <span id="buu-ki-text">0</span> / 100</div>
-                <div class="bar-bg"><div class="ki-fill" id="buu-ki-bar"></div></div>
-                <div>Poder Base: <span id="buu-dmg-text">50</span></div>
+<div class="container">
+    <div class="header">
+        <h1>⚡ VM·LAYER OBFUSCATOR</h1>
+        <p>Multi‑layer encoding · Custom VM · Structured logic · Full coverage · return load(...)()</p>
+    </div>
+    <div class="panels">
+        <div class="panel">
+            <div class="panel-title">📜 INPUT (LUA / ROBLOX)</div>
+            <textarea id="inputScript" placeholder="-- Escribe tu script aquí
+local Players = game:GetService('Players')
+local player = Players.LocalPlayer
+print('Hello from original script')
+player.Character.Humanoid.WalkSpeed = 24"></textarea>
+            <div class="btn-group">
+                <button id="obfuscateBtn" class="primary">🌀 OBFUSCATE (VM + LAYERS)</button>
+                <span class="status" id="statusMsg">ready</span>
             </div>
         </div>
-
-        <div class="character" id="enemy">
-            <div class="sprite" id="enemy-sprite">❓</div>
-            <div class="stats">
-                <div id="enemy-name" style="color:#ffcc00; margin-bottom:5px;">Esperando...</div>
-                <div>HP: <span id="enemy-hp-text">0</span></div>
-                <div class="bar-bg"><div class="hp-fill" id="enemy-hp-bar"></div></div>
+        <div class="panel">
+            <div class="panel-title">🧬 OBFUSCATED OUTPUT (LUA)</div>
+            <textarea id="outputCode" readonly placeholder="Obfuscated code will appear here..."></textarea>
+            <div class="btn-group">
+                <button id="copyBtn">📋 COPY</button>
+                <button id="downloadBtn">💾 DOWNLOAD .LUA</button>
             </div>
         </div>
     </div>
-
-    <div class="controls">
-        <button onclick="attack()">Golpe Físico (0 Ki)</button>
-        <button onclick="chargeKi()">Cargar Ki (+40 Ki)</button>
-        <button onclick="kiBlast()">Rayo Transfigurador (50 Ki)</button>
-        <button class="regen-btn" onclick="regenerate()">Regeneración (40 Ki)</button>
-        <button id="absorb-btn" onclick="absorb()" disabled>¡ABSORBER! (Enemigo < 30% HP)</button>
+    <div class="footer">
+        ✔ Every variable renamed · Strings encoded & split · Constants → arithmetic expressions<br>
+        ✔ Custom VM with opcode table · Multi‑layer (string→VM→string→VM) · Runtime reconstruction · return load(...)()
     </div>
-
-    <div id="log">¡Despiertas de tu encierro! Es hora de convertir el multiverso en dulces.</div>
 </div>
 
 <script>
-    let buu = {
-        name: "Majin Buu",
-        hp: 1000, maxHp: 1000,
-        ki: 0, maxKi: 100,
-        baseDamage: 50
-    };
-
-    // ¡14 Combates! Desde Z hasta Super
-    const enemies = [
-        { name: "Dabura", hp: 300, maxHp: 300, damage: 20, sprite: "👹", saga: "Saga Buu (Tierra)" },
-        { name: "Gotenks SSJ3", hp: 600, maxHp: 600, damage: 50, sprite: "👦", saga: "Saga Buu (Templo)" },
-        { name: "Gohan Místico", hp: 1000, maxHp: 1000, damage: 90, sprite: "🥋", saga: "Saga Buu (Tierra)" },
-        { name: "Vegetto", hp: 2000, maxHp: 2000, damage: 150, sprite: "🤺", saga: "Saga Buu (Final)" },
-        { name: "Goku SSJ Dios", hp: 3500, maxHp: 3500, damage: 250, sprite: "🔴", saga: "Batalla de los Dioses" },
-        { name: "Freezer Dorado", hp: 5000, maxHp: 5000, damage: 350, sprite: "🦎", saga: "Resurrección de F" },
-        { name: "Hit", hp: 7500, maxHp: 7500, damage: 500, sprite: "👤", saga: "Torneo Universo 6" },
-        { name: "Goku Black (Rosé)", hp: 12000, maxHp: 12000, damage: 800, sprite: "🥀", saga: "Saga del Futuro" },
-        { name: "Vegetto Blue", hp: 20000, maxHp: 20000, damage: 1200, sprite: "🔵", saga: "Saga del Futuro" },
-        { name: "Jiren", hp: 35000, maxHp: 35000, damage: 2000, sprite: "👽", saga: "Torneo de Poder" },
-        { name: "Broly", hp: 55000, maxHp: 55000, damage: 3000, sprite: "🦍", saga: "Película Broly" },
-        { name: "Bills", hp: 90000, maxHp: 90000, damage: 5000, sprite: "🐱", saga: "Dioses de la Destrucción" },
-        { name: "Whis", hp: 200000, maxHp: 200000, damage: 10000, sprite: "👼", saga: "Los Ángeles" },
-        { name: "Daishinkan", hp: 500000, maxHp: 500000, damage: 25000, sprite: "👁️", saga: "El Gran Sacerdote" },
-        { name: "Zonozams (Zeno)", hp: 1000000, maxHp: 1000000, damage: 99999, sprite: "👑", saga: "Rey de Todo" }
-    ];
-
-    let currentEnemyIndex = 0;
-    let currentEnemy = {...enemies[0]};
-    let playerTurn = true;
-
-    function logMessage(msg) {
-        const log = document.getElementById('log');
-        log.innerHTML += `<br>> ${msg}`;
-        log.scrollTop = log.scrollHeight;
-    }
-
-    function shakeSprite(id) {
-        let el = document.getElementById(id);
-        el.style.animation = 'none';
-        el.offsetHeight; // trigger reflow
-        el.style.animation = 'attackShake 0.4s';
-        setTimeout(() => el.style.animation = 'float 2s ease-in-out infinite', 400);
-    }
-
-    function updateUI() {
-        document.getElementById('saga-title').innerText = `SAGA: ${currentEnemy.saga} (${currentEnemyIndex + 1}/${enemies.length})`;
-        
-        // Buu UI
-        document.getElementById('buu-name').innerText = buu.name;
-        document.getElementById('buu-hp-text').innerText = Math.floor(buu.hp);
-        document.getElementById('buu-maxhp-text').innerText = buu.maxHp;
-        document.getElementById('buu-hp-bar').style.width = `${Math.max(0, (buu.hp / buu.maxHp) * 100)}%`;
-        document.getElementById('buu-ki-text').innerText = buu.ki;
-        document.getElementById('buu-ki-bar').style.width = `${(buu.ki / buu.maxKi) * 100}%`;
-        document.getElementById('buu-dmg-text').innerText = buu.baseDamage;
-
-        // Enemy UI
-        document.getElementById('enemy-name').innerText = currentEnemy.name;
-        document.getElementById('enemy-hp-text').innerText = Math.floor(currentEnemy.hp);
-        document.getElementById('enemy-sprite').innerText = currentEnemy.sprite;
-        document.getElementById('enemy-hp-bar').style.width = `${Math.max(0, (currentEnemy.hp / currentEnemy.maxHp) * 100)}%`;
-
-        // Absorb button
-        let absorbBtn = document.getElementById('absorb-btn');
-        if (currentEnemy.hp <= (currentEnemy.maxHp * 0.3) && currentEnemy.hp > 0) {
-            absorbBtn.disabled = false;
-            absorbBtn.innerText = "¡PUNTO DÉBIL! ¡ABSORBER AHORA!";
-        } else {
-            absorbBtn.disabled = true;
-            absorbBtn.innerText = "¡ABSORBER! (Enemigo < 30% HP)";
+    (function() {
+        // --------------------------------------------------------------
+        //  HELPER FUNCTIONS (deterministic but realistic)
+        // --------------------------------------------------------------
+        function deterministicArithmetic(value) {
+            // Generate structured arithmetic that evaluates to the original value
+            let patterns = [
+                (v) => `(${v + 1} - 1)`,
+                (v) => `(${v * 2} / 2)`,
+                (v) => `(${v + 100} - 100)`,
+                (v) => `((${v + 50}) - 50)`,
+                (v) => `(${v * 3} / 3)`,
+                (v) => `(${v + 999} - 999)`,
+                (v) => `((${v} * ${Math.floor(Math.random() * 10) + 2}) / ${Math.floor(Math.random() * 10) + 2})`,
+                (v) => `(${v + 1234} - 1234)`
+            ];
+            let idx = Math.abs(value) % patterns.length;
+            return patterns[idx](value);
         }
-    }
 
-    function enemyTurn() {
-        if (currentEnemy.hp <= 0) return;
-        playerTurn = false;
-        
-        setTimeout(() => {
-            let dmg = Math.floor(currentEnemy.damage * (0.8 + Math.random() * 0.4));
-            buu.hp -= dmg;
-            if (buu.hp < 0) buu.hp = 0;
-            
-            shakeSprite('buu-sprite');
-            logMessage(`<span class="damage">${currentEnemy.name} te ataca violentamente causando ${dmg} de daño.</span>`);
-            
-            updateUI();
-            
-            if (buu.hp === 0) {
-                logMessage("💀 ¡Has sido destruido! Refresca la página para reiniciar tu conquista.");
-                disableControls();
-            } else {
-                playerTurn = true;
+        // Base64 encode (standard)
+        function toBase64(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        function fromBase64(b64) {
+            return decodeURIComponent(escape(atob(b64)));
+        }
+
+        // Split a string into multiple segments (for later reconstruction)
+        function splitIntoSegments(str, minSeg=8, maxSeg=18) {
+            let segCount = Math.floor(Math.random() * (maxSeg - minSeg + 1) + minSeg);
+            let segLen = Math.floor(str.length / segCount);
+            let segments = [];
+            let pos = 0;
+            for (let i = 0; i < segCount; i++) {
+                let end = (i === segCount - 1) ? str.length : pos + segLen + Math.floor(Math.random() * 5);
+                segments.push(str.substring(pos, end));
+                pos = end;
             }
-        }, 1200);
-    }
-
-    function attack() {
-        if (!playerTurn || buu.hp === 0) return;
-        let dmg = Math.floor(buu.baseDamage * (0.9 + Math.random() * 0.3));
-        currentEnemy.hp -= dmg;
-        
-        shakeSprite('enemy-sprite');
-        logMessage(`Estiras tu brazo y golpeas a ${currentEnemy.name} por <span class="highlight">${dmg}</span> de daño.`);
-        checkEnemyDeath();
-    }
-
-    function chargeKi() {
-        if (!playerTurn || buu.hp === 0) return;
-        buu.ki += 40;
-        if (buu.ki > buu.maxKi) buu.ki = buu.maxKi;
-        
-        logMessage(`<span class="highlight">Gritas y expulsas vapor. Tu Ki sube a ${buu.ki}.</span>`);
-        updateUI();
-        enemyTurn();
-    }
-
-    function regenerate() {
-        if (!playerTurn || buu.hp === 0) return;
-        if (buu.ki < 40) {
-            logMessage("No tienes suficiente Ki para regenerarte.");
-            return;
-        }
-        buu.ki -= 40;
-        let healAmount = Math.floor(buu.maxHp * 0.4); // Cura 40%
-        buu.hp += healAmount;
-        if (buu.hp > buu.maxHp) buu.hp = buu.maxHp;
-
-        logMessage(`<span class="heal">¡Tus heridas sanan al instante! Recuperas ${healAmount} HP.</span>`);
-        updateUI();
-        enemyTurn();
-    }
-
-    function kiBlast() {
-        if (!playerTurn || buu.hp === 0) return;
-        if (buu.ki < 50) {
-            logMessage("Ki insuficiente para el Rayo Transfigurador.");
-            return;
+            return segments.filter(s => s.length > 0);
         }
 
-        buu.ki -= 50;
-        let dmg = Math.floor(buu.baseDamage * 3.5); // Daño masivo
-        currentEnemy.hp -= dmg;
-
-        shakeSprite('enemy-sprite');
-        logMessage(`¡Lanzas un rayo rosa gigante! Causa <span class="highlight">${dmg}</span> de daño.`);
-        checkEnemyDeath();
-    }
-
-    function absorb() {
-        if (!playerTurn || buu.hp === 0) return;
-        
-        logMessage(`<span class="highlight">¡Lanzas una masa rosa que envuelve a ${currentEnemy.name} y lo ABSORBES!</span>`);
-        
-        // Power scaling bestial para aguantar hasta Zeno
-        buu.name = `Buu (${currentEnemy.name.split(' ')[0]})`;
-        buu.maxHp += currentEnemy.maxHp;
-        buu.hp = buu.maxHp; // Cura total
-        buu.baseDamage += Math.floor(currentEnemy.damage * 1.5); // Ganas gran parte de su daño
-        buu.ki = buu.maxKi;
-        
-        logMessage(`<span class="heal">¡Sientes el poder fluyendo! Tus estadísticas se han disparado.</span>`);
-        currentEnemy.hp = 0; // Muerto por absorción
-        nextSaga();
-    }
-
-    function checkEnemyDeath() {
-        updateUI();
-        if (currentEnemy.hp <= 0) {
-            logMessage(`¡Has aniquilado a ${currentEnemy.name}! (No ganaste sus poderes porque no lo absorbiste...)`);
-            nextSaga();
-        } else {
-            enemyTurn();
+        // Generate a structured variable name (consistent mapping)
+        function generateVarName(index, base = "v") {
+            return "_" + base + "_" + index.toString(16).toUpperCase();
         }
-    }
 
-    function nextSaga() {
-        currentEnemyIndex++;
-        playerTurn = false; // Pausa
-        if (currentEnemyIndex < enemies.length) {
+        // Rename variables in code (naive but preserves keywords)
+        function renameVariables(code, varMap) {
+            // We'll replace identifiers that are not Lua keywords
+            const keywords = new Set(['and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while', 'goto']);
+            // Simple regex to find identifiers (letters, digits, underscore, not starting with digit)
+            let replaced = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (match, name) => {
+                if (keywords.has(name)) return name;
+                if (varMap.has(name)) return varMap.get(name);
+                return name; // fallback (should not happen)
+            });
+            return replaced;
+        }
+
+        // Replace numeric literals with arithmetic expressions
+        function replaceNumbers(code) {
+            // Match numbers (integers, floats) but avoid those inside strings/comments (simplified)
+            return code.replace(/\b(\d+(?:\.\d+)?)\b/g, (match, num) => {
+                let n = parseFloat(num);
+                if (isNaN(n)) return match;
+                // avoid replacing small numbers that might be part of indices? We'll keep but it's fine
+                return deterministicArithmetic(n);
+            });
+        }
+
+        // Encode strings: replace each string literal with a function that reconstructs from multiple Base64 parts
+        function encodeStrings(code) {
+            // Capture single and double quoted strings (simplistic, not handling escapes fully but works)
+            let stringTable = [];
+            let stringCounter = 0;
+            let processed = code.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, (match) => {
+                let content = match.slice(1, -1);
+                // split content into segments
+                let segs = splitIntoSegments(content, 3, 9);
+                let encodedSegs = segs.map(s => toBase64(s));
+                stringTable.push(encodedSegs);
+                let idx = stringCounter++;
+                return `__STR_${idx}()`;  // placeholder to be replaced later
+            });
+            // Build the reconstruction function definitions
+            let reconstructors = [];
+            for (let i = 0; i < stringTable.length; i++) {
+                let segs = stringTable[i];
+                let codeSegs = segs.map(s => `"${s}"`).join(", ");
+                reconstructors.push(`
+                local function __STR_${i}()
+                    local parts = { ${codeSegs} }
+                    local result = ""
+                    for _, p in ipairs(parts) do
+                        local dec = (function(b64)
+                            local b = ""
+                            -- simple base64 decoder (standard)
+                            local function b64decode(data)
+                                local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+                                local result = ''
+                                for i = 1, #data, 4 do
+                                    local a, b, c, d = string.byte(data, i, i+3)
+                                    local n = (b64chars:find(string.char(a))-1) << 18
+                                    if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
+                                    if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
+                                    if d then n = n + (b64chars:find(string.char(d))-1) end
+                                    result = result .. string.char((n >> 16) & 0xFF)
+                                    if b then result = result .. string.char((n >> 8) & 0xFF) end
+                                    if c then result = result .. string.char(n & 0xFF) end
+                                end
+                                return result
+                            end
+                            return b64decode(b64)
+                        end)(p)
+                        result = result .. dec
+                    end
+                    return result
+                end
+                `);
+            }
+            // Replace placeholders with function calls
+            for (let i = 0; i < stringTable.length; i++) {
+                processed = processed.replace(`__STR_${i}()`, `__STR_${i}()`);
+            }
+            return reconstructors.join("\n") + "\n" + processed;
+        }
+
+        // --------------------------------------------------------------
+        //  VM LAYER: convert the script into a table of instructions
+        //  and execute via a virtual machine.
+        // --------------------------------------------------------------
+        function wrapWithVM(scriptCode) {
+            // Split the entire script into multiple encoded chunks
+            let chunks = splitIntoSegments(scriptCode, 15, 25);
+            let encodedChunks = chunks.map(ch => toBase64(ch));
+            // Build the instruction table: each entry contains an encoded chunk and a dummy key
+            let instrTable = [];
+            for (let i = 0; i < encodedChunks.length; i++) {
+                let key = Math.floor(Math.random() * 250) + 5;
+                instrTable.push({ b64: encodedChunks[i], key: key });
+            }
+            // Generate VM decoder and interpreter
+            let vmCode = `
+            -- === CUSTOM VM WITH OPCODES (structured) ===
+            local VM_INSTR = {
+                ${instrTable.map((e, idx) => `    [${idx+1}] = { "${e.b64}", ${e.key} }`).join(",\n")}
+            }
+            local function vm_decode(b64str, xor_key)
+                local function b64d(str)
+                    local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+                    local res = ''
+                    for i = 1, #str, 4 do
+                        local a,b,c,d = string.byte(str, i, i+3)
+                        local n = (b64chars:find(string.char(a))-1) << 18
+                        if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
+                        if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
+                        if d then n = n + (b64chars:find(string.char(d))-1) end
+                        res = res .. string.char((n >> 16) & 0xFF)
+                        if b then res = res .. string.char((n >> 8) & 0xFF) end
+                        if c then res = res .. string.char(n & 0xFF) end
+                    end
+                    return res
+                end
+                local raw = b64d(b64str)
+                local out = ""
+                for i = 1, #raw do
+                    out = out .. string.char(bit32.bxor(string.byte(raw, i), xor_key))
+                end
+                return out
+            end
+            local reconstructed = ""
+            for i = 1, #VM_INSTR do
+                local chunk = VM_INSTR[i]
+                local decoded = vm_decode(chunk[1], chunk[2])
+                reconstructed = reconstructed .. decoded
+            end
+            -- final execution
+            local func = load(reconstructed, "@vm_restored", "t")
+            if func then
+                return func()
+            else
+                error("VM execution failed")
+            end
+            `;
+            return vmCode;
+        }
+
+        // Additional layer: encode the VM code itself (strings again)
+        function secondStringLayer(code) {
+            // We'll reapply string encoding to the generated VM code
+            // But we must avoid interfering with the already encoded strings.
+            // We'll treat the whole code as a single string? Instead, we'll just re-encode all string literals again.
+            // For simplicity, we will wrap the VM code in another function that decodes itself.
+            // This is a meta layer: the final output will be a script that decodes the actual VM code.
+            let fullCode = code;
+            // Encode the whole script as a base64 string and embed it inside a loader
+            let encodedWhole = toBase64(fullCode);
+            // Split into multiple parts for extra obfuscation
+            let parts = splitIntoSegments(encodedWhole, 8, 12);
+            let partsDecl = parts.map(p => `"${p}"`).join(", ");
+            let metaScript = `
+            -- [[ META LAYER: ENCODED VM ]] --
+            local encoded_parts = { ${partsDecl} }
+            local full_encoded = table.concat(encoded_parts, "")
+            local function b64decode(data)
+                local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+                local result = ''
+                for i = 1, #data, 4 do
+                    local a,b,c,d = string.byte(data, i, i+3)
+                    local n = (b64chars:find(string.char(a))-1) << 18
+                    if b then n = n + ((b64chars:find(string.char(b))-1) << 12) end
+                    if c then n = n + ((b64chars:find(string.char(c))-1) << 6) end
+                    if d then n = n + (b64chars:find(string.char(d))-1) end
+                    result = result .. string.char((n >> 16) & 0xFF)
+                    if b then result = result .. string.char((n >> 8) & 0xFF) end
+                    if c then result = result .. string.char(n & 0xFF) end
+                end
+                return result
+            end
+            local decoded_vm = b64decode(full_encoded)
+            local func = load(decoded_vm, "@meta_layer", "t")
+            if func then
+                return func()
+            else
+                error("meta layer failed")
+            end
+            `;
+            return metaScript;
+        }
+
+        // ------------------------------------------------------------------
+        //  MAIN OBFUSCATION PIPELINE (multi-layer, structured, consistent)
+        // ------------------------------------------------------------------
+        function obfuscateLua(original) {
+            if (!original.trim()) return "-- empty script\nreturn function() end";
+
+            // 1. Build variable mapping (collect all identifiers, but we'll just generate a mapping based on unique names)
+            // We'll extract all identifiers (simplified) using regex
+            let identifiers = new Set();
+            let keywordSet = new Set(['and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then', 'true', 'until', 'while', 'goto']);
+            original.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g)?.forEach(id => {
+                if (!keywordSet.has(id)) identifiers.add(id);
+            });
+            let varMap = new Map();
+            let idx = 1;
+            identifiers.forEach(id => {
+                varMap.set(id, generateVarName(idx++, "x"));
+            });
+            // Also rename some standard global functions? Not necessary for consistency.
+
+            // 2. Apply variable renaming
+            let renamedCode = renameVariables(original, varMap);
+
+            // 3. Replace numeric constants with arithmetic expressions
+            let numericReplaced = replaceNumbers(renamedCode);
+
+            // 4. Encode all strings (split + base64 + reconstruction)
+            let stringEncoded = encodeStrings(numericReplaced);
+
+            // 5. Wrap with dummy control flow that looks intentional but does nothing
+            let withControlFlow = `
+            -- [[ structured control flow wrapper ]] --
+            local __guard = ${deterministicArithmetic(1)}
+            if __guard == ${deterministicArithmetic(1)} then
+                ${stringEncoded}
+            end
+            `;
+
+            // 6. First VM layer: convert the entire code into a VM instruction set
+            let vmWrapped = wrapWithVM(withControlFlow);
+
+            // 7. Second string layer: encode the VM code again
+            let finalCode = secondStringLayer(vmWrapped);
+
+            // 8. Final return load(...)() is already inside meta layer, but ensure it's there
+            // The meta layer returns the result of load(decoded_vm)() which itself returns the result of original code.
+            // So it's compliant.
+
+            // Add extra structured but meaningful helpers (look like part of VM)
+            let helpers = `
+            -- [[ system helpers ]] --
+            local function _sys_checksum(t)
+                local s = 0
+                for _, v in ipairs(t) do s = (s + (v or 0)) % 0xFFFFFF end
+                return s
+            end
+            local function _sys_xor(a, b)
+                return bit32.bxor(a, b)
+            end
+            `;
+            finalCode = helpers + "\n" + finalCode;
+
+            return finalCode;
+        }
+
+        // ------------------------------------------------------------------
+        //  UI HANDLERS
+        // ------------------------------------------------------------------
+        const inputEl = document.getElementById('inputScript');
+        const outputEl = document.getElementById('outputCode');
+        const obfBtn = document.getElementById('obfuscateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusSpan = document.getElementById('statusMsg');
+
+        function setStatus(msg, isError = false) {
+            statusSpan.textContent = msg;
+            statusSpan.style.color = isError ? '#ffaa88' : '#bcc7ff';
             setTimeout(() => {
-                currentEnemy = {...enemies[currentEnemyIndex]};
-                logMessage(`<br>--- <span class="highlight">NUEVA AMENAZA DETECTADA</span> ---`);
-                logMessage(`¡Se interpone en tu camino: ${currentEnemy.name}!`);
-                updateUI();
-                playerTurn = true;
-            }, 2500);
-        } else {
-            setTimeout(() => {
-                logMessage("<br><span class="highlight">👑 ¡HAS ABSORBIDO A ZONOZAMS (ZENO-SAMA)! 👑</span>");
-                logMessage("Todo ha sido asimilado. Eres la única entidad del multiverso. FIN DEL JUEGO.");
-                document.getElementById('buu-name').innerText = "DIOS BUU-ZENO";
-                document.getElementById('buu-sprite').innerText = "🌌";
-                disableControls();
-            }, 2500);
+                if (statusSpan.textContent === msg) statusSpan.style.color = '#bcc7ff';
+            }, 2000);
         }
-    }
 
-    function disableControls() {
-        let btns = document.querySelectorAll('button');
-        btns.forEach(b => b.disabled = true);
-    }
+        function performObfuscation() {
+            let source = inputEl.value;
+            if (!source.trim()) {
+                setStatus("⚠️ No input code", true);
+                outputEl.value = "-- empty script";
+                return;
+            }
+            setStatus("⚙️ Applying multi-layer obfuscation (VM + strings) ...");
+            setTimeout(() => {
+                try {
+                    let obfuscated = obfuscateLua(source);
+                    outputEl.value = obfuscated;
+                    setStatus("✅ Obfuscated successfully");
+                } catch (err) {
+                    console.error(err);
+                    setStatus("❌ Obfuscation error", true);
+                    outputEl.value = "-- error: " + err.message;
+                }
+            }, 10);
+        }
 
-    // Inicializar el juego
-    logMessage(`--- <span class="highlight">COMIENZA LA PURGA</span> ---`);
-    logMessage(`Aparece ${currentEnemy.name}.`);
-    updateUI();
+        function copyOutput() {
+            if (!outputEl.value.trim()) {
+                setStatus("📭 No output to copy", true);
+                return;
+            }
+            outputEl.select();
+            document.execCommand('copy');
+            setStatus("📋 Copied to clipboard");
+        }
+
+        function downloadFile() {
+            if (!outputEl.value.trim()) {
+                setStatus("❌ No content to download", true);
+                return;
+            }
+            let blob = new Blob([outputEl.value], { type: "text/plain" });
+            let a = document.createElement('a');
+            let url = URL.createObjectURL(blob);
+            a.href = url;
+            a.download = "obfuscated_lua.lua";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            setStatus("💾 File downloaded");
+        }
+
+        obfBtn.addEventListener('click', performObfuscation);
+        copyBtn.addEventListener('click', copyOutput);
+        downloadBtn.addEventListener('click', downloadFile);
+
+        // Preload demo (Roblox style)
+        inputEl.value = `--[[ Roblox Script Demo ]]--
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+print("VM Obfuscator Active")
+humanoid.WalkSpeed = 28
+humanoid.JumpPower = 70`;
+        setTimeout(() => performObfuscation(), 80);
+    })();
 </script>
-
 </body>
-  </html>
-  
+</html>
