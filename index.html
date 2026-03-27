@@ -3,685 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔒 LUA OBFUSCATOR · Roblox | 100% Funcional</title>
+    <title>Desofuscador Lua (Roblox / MoonSec)</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0e1a, #010101);
-            font-family: 'Fira Code', 'Courier New', monospace;
-            padding: 1.5rem;
-            color: #c6ffdd;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e2f;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
         }
-
         .container {
-            max-width: 1500px;
+            max-width: 1400px;
             margin: 0 auto;
         }
-
-        .header {
-            text-align: center;
-            border: 1px solid #66ffcc;
-            background: #0b0f1ccc;
-            backdrop-filter: blur(5px);
-            padding: 1.2rem;
-            border-radius: 48px;
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #ffb86c;
+        }
+        .sub {
+            color: #aaa;
             margin-bottom: 2rem;
+            border-left: 4px solid #ffb86c;
+            padding-left: 1rem;
         }
-
-        .header h1 {
-            font-size: 2.3rem;
-            background: linear-gradient(135deg, #ff99ff, #88ffff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-
-        .header p {
-            color: #bbffdd;
-            font-size: 0.9rem;
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background: #2d2d3a;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-
-        .two-cols {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.8rem;
-            margin-bottom: 1.8rem;
+        .panel h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            color: #f8f8f2;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
         }
-
-        .card {
-            background: #0c1122dd;
-            border: 1px solid #44ffcc;
-            border-radius: 28px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: #16212e;
-            padding: 0.8rem 1.5rem;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-bottom: 1px solid #88ffcc;
-        }
-
-        .card-body {
-            padding: 1.3rem;
-        }
-
-        textarea, input {
+        textarea {
             width: 100%;
-            background: #010408;
-            border: 1px solid #44ffcc;
-            padding: 12px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            color: #e2fff0;
-            border-radius: 20px;
+            height: 500px;
+            background: #1e1e2a;
+            color: #f8f8f2;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 10px;
             resize: vertical;
         }
-
-        textarea:focus, input:focus {
-            border-color: #ff66ff;
-            outline: none;
-            box-shadow: 0 0 8px #ff44dd;
-        }
-
-        .stats {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            justify-content: space-between;
-        }
-
-        .stat {
-            background: #03080f;
-            border-radius: 32px;
-            padding: 0.2rem 0.8rem;
-            text-align: center;
-            flex: 1;
-            border: 1px solid #77ffcc;
-        }
-
-        .stat span:first-child {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-        }
-
-        .stat span:last-child {
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: block;
-            color: #ffccff;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            justify-content: center;
-        }
-
-        .btn {
-            background: linear-gradient(95deg, #b040ff, #22ccdd);
+        button {
+            background: #6272a4;
             border: none;
-            padding: 12px 26px;
-            font-weight: bold;
-            font-family: monospace;
+            color: white;
+            padding: 10px 20px;
             font-size: 1rem;
-            border-radius: 60px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
-            color: #000;
-            box-shadow: 0 2px 8px black;
+            margin-top: 12px;
+            transition: background 0.2s;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 0 12px #ff88ff;
+        button:hover {
+            background: #50fa7b;
+            color: #282a36;
         }
-
-        .options-panel {
-            background: #0a1020cc;
-            border: 1px solid #ff66cc;
-            border-radius: 28px;
-            padding: 1rem 1.8rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .options-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            margin-top: 0.6rem;
-        }
-
-        .opt {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #141e2c;
-            padding: 5px 15px;
-            border-radius: 40px;
-        }
-
         .status {
-            background: #10161f;
-            border-radius: 24px;
-            padding: 8px 15px;
-            margin-bottom: 1rem;
-            border-left: 5px solid #88ffcc;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #bd93f9;
         }
-
-        .copy-btn {
-            background: #2c3e4e;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
         }
-
-        @media (max-width: 800px) {
-            .two-cols { grid-template-columns: 1fr; }
+        hr {
+            border-color: #444;
+        }
+        .note {
+            background: #44475a;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>🛡️ LUA OBFUSCATOR · Roblox Exploit Ready</h1>
-        <p>🔐 Renombrado seguro + números con (12002-12001) + basura inofensiva + VM opcional | SIN ROMPER EL CÓDIGO</p>
-    </div>
+    <h1>🛠️ Desofuscador Lua (Roblox / MoonSec)</h1>
+    <div class="sub">Herramienta básica para decodificar strings, eliminar código basura y simplificar constantes.</div>
 
-    <div class="two-cols">
-        <div class="card">
-            <div class="card-header">📜 CÓDIGO LUA ORIGINAL</div>
-            <div class="card-body">
-                <textarea id="inputCode" rows="12" placeholder="--[[ Ejemplo Roblox ]]
-local Players = game:GetService('Players')
-local localPlayer = Players.LocalPlayer
-
-local function teleportTo(pos)
-    localPlayer.Character.HumanoidRootPart.CFrame = pos
-end
-
-teleportTo(CFrame.new(0, 50, 0))
-print('Hola exploit')"></textarea>
-                <div class="stats">
-                    <div class="stat"><span>LÍNEAS</span><span id="inLines">0</span></div>
-                    <div class="stat"><span>CARACTERES</span><span id="inChars">0</span></div>
-                    <div class="stat"><span>LOCALES/FUNC</span><span id="inLocals">0</span></div>
-                </div>
+    <div class="panels">
+        <div class="panel">
+            <h2>📥 Script ofuscado</h2>
+            <textarea id="inputScript" placeholder="Pega aquí el script Lua ofuscado..."></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button id="deobfBtn">🔓 Desofuscar</button>
+                <button id="clearBtn">🗑️ Limpiar</button>
             </div>
+            <div id="status" class="status"></div>
         </div>
-
-        <div class="card">
-            <div class="card-header">🔒 CÓDIGO OFUSCADO (SEGURO)</div>
-            <div class="card-body">
-                <div class="status" id="statusMsg">✅ Listo para ofuscar. El código mantendrá su funcionalidad.</div>
-                <textarea id="outputCode" rows="12" readonly placeholder="Código ofuscado aparecerá aquí..."></textarea>
-                <div class="stats">
-                    <div class="stat"><span>LÍNEAS</span><span id="outLines">0</span></div>
-                    <div class="stat"><span>CARACTERES</span><span id="outChars">0</span></div>
-                    <div class="stat"><span>RATIO</span><span id="outRatio">0%</span></div>
-                </div>
-                <button class="copy-btn" id="copyBtn">📋 COPIAR SCRIPT</button>
-            </div>
+        <div class="panel">
+            <h2>✨ Script desofuscado</h2>
+            <textarea id="outputScript" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+            <button id="copyBtn">📋 Copiar al portapapeles</button>
         </div>
     </div>
 
-    <div class="options-panel">
-        <div style="font-weight: bold; color:#ff99ff">⚙️ CAPAS DE OFUSCACIÓN (todas seguras)</div>
-        <div class="options-grid">
-            <label class="opt"><input type="checkbox" id="optRename" checked> 🏷️ Renombrar variables locales y parámetros</label>
-            <label class="opt"><input type="checkbox" id="optNumbers" checked> 🔢 Ofuscar números (12002-12001, etc)</label>
-            <label class="opt"><input type="checkbox" id="optJunk" checked> 🗑️ Inyectar código basura (no afecta lógica)</label>
-            <label class="opt"><input type="checkbox" id="optVM" checked> 🧠 Envoltorio VM (loadstring con caos matemático)</label>
-            <label class="opt"><input type="checkbox" id="optMinify"> ✨ Minificar resultado</label>
-        </div>
-        <div style="margin-top: 0.8rem; font-size: 0.75rem; color: #bbffaa;">✨ Técnicas robustas: tokenización respeta strings/comentarios, renombrado solo de locales, números convertidos en expresiones equivalentes, basura inofensiva, VM con reconstrucción exacta. ¡El script original se ejecuta igual!</div>
+    <div class="note">
+        ⚠️ <strong>Limitaciones:</strong> Esta herramienta realiza desofuscación estática básica:
+        <ul>
+            <li>Decodifica strings en formato decimal (<code>\110\121\073</code>), hexadecimal (<code>\x48\x65</code>) y base64 (solo si detecta patrones simples).</li>
+            <li>Elimina expresiones matemáticas constantes (ej. <code>15000-14999</code> → <code>1</code>).</li>
+            <li>Intenta eliminar código basura: variables no usadas, operaciones inútiles (solo casos evidentes).</li>
+            <li><strong>No desofusca máquinas virtuales personalizadas (VM) ni ofuscadores avanzados como IronBrew, MoonSec v2+ con VM.</strong> Para esos necesitas análisis manual por capas.</li>
+        </ul>
+        Si el script contiene una VM (bucle <code>while ... do</code> con casos), el resultado no será ejecutable directamente.
     </div>
-
-    <div class="btn-group">
-        <button class="btn" id="obfuscateBtn">🌀 OFUSCAR AHORA</button>
-        <button class="btn" id="downloadBtn">⬇️ DESCARGAR .LUA</button>
-        <button class="btn" id="testBtn">▶️ SIMULAR EJECUCIÓN</button>
-        <button class="btn" id="clearBtn">🗑️ LIMPIAR</button>
+    <div class="footer">
+        Herramienta educativa · No garantiza desofuscación completa en scripts muy protegidos.
     </div>
 </div>
 
 <script>
-    // ================== OFUSCADOR LUA ROBUSTO ==================
-    // Basado en tokenización segura, renombrado preciso y transformaciones que no alteran la semántica.
-    class SafeLuaObfuscator {
-        constructor() {
-            this.usedNames = new Set();
+    (function() {
+        const inputArea = document.getElementById('inputScript');
+        const outputArea = document.getElementById('outputScript');
+        const statusDiv = document.getElementById('status');
+        const deobfBtn = document.getElementById('deobfBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // ---------- utilidades ----------
+        function showStatus(msg, isError = false) {
+            statusDiv.textContent = msg;
+            statusDiv.style.color = isError ? '#ff5555' : '#50fa7b';
+            setTimeout(() => {
+                if (statusDiv.textContent === msg) statusDiv.style.color = '#bd93f9';
+            }, 3000);
         }
 
-        // Genera identificador único estilo _0xABCD
-        randomId() {
-            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let id = '_0x';
-            for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)];
-            while (this.usedNames.has(id)) {
-                id = '_0x' + Math.random().toString(36).substring(2, 8);
-            }
-            this.usedNames.add(id);
-            return id;
+        // Decodificar strings con escapes decimales y hexadecimales
+        function decodeEscapedStrings(str) {
+            // Decimal: \123\45
+            str = str.replace(/\\(\d{1,3})/g, (match, oct) => {
+                let code = parseInt(oct, 10);
+                return String.fromCharCode(code);
+            });
+            // Hexadecimal: \x48\x65
+            str = str.replace(/\\x([0-9a-fA-F]{2})/g, (match, hex) => {
+                return String.fromCharCode(parseInt(hex, 16));
+            });
+            // Unicode corto: \u{...} o \uXXXX (pero raro en Lua)
+            str = str.replace(/\\u\{([0-9a-fA-F]+)\}/g, (match, hex) => {
+                return String.fromCharCode(parseInt(hex, 16));
+            });
+            return str;
         }
 
-        // Tokenizador inteligente: separa texto en tokens con tipo: 'text', 'string', 'comment', 'number', 'ident'
-        // Mantiene posición original para reemplazos seguros.
-        tokenize(code) {
-            const tokens = [];
-            let i = 0;
-            const n = code.length;
-            while (i < n) {
-                // Comentario de línea --
-                if (code[i] === '-' && code[i+1] === '-') {
-                    let start = i;
-                    i += 2;
-                    while (i < n && code[i] !== '\n') i++;
-                    tokens.push({ type: 'comment', value: code.substring(start, i) });
-                    continue;
-                }
-                // Comentario largo --[[ ... ]]
-                if (code[i] === '-' && code[i+1] === '-' && code[i+2] === '[' && code[i+3] === '[') {
-                    let start = i;
-                    i += 4;
-                    let depth = 1;
-                    while (i < n && depth > 0) {
-                        if (code[i] === ']' && code[i+1] === ']') { depth--; i += 2; }
-                        else if (code[i] === '[' && code[i+1] === '[') { depth++; i += 2; }
-                        else i++;
-                    }
-                    tokens.push({ type: 'comment', value: code.substring(start, i) });
-                    continue;
-                }
-                // String con comillas
-                if (code[i] === '"' || code[i] === "'") {
-                    let start = i;
-                    const quote = code[i];
-                    i++;
-                    while (i < n && code[i] !== quote) {
-                        if (code[i] === '\\') i++;
-                        i++;
-                    }
-                    i++; // cierra comilla
-                    tokens.push({ type: 'string', value: code.substring(start, i) });
-                    continue;
-                }
-                // Números (enteros y flotantes)
-                if (/[0-9]/.test(code[i]) || (code[i] === '.' && /[0-9]/.test(code[i+1]))) {
-                    let start = i;
-                    while (i < n && /[0-9.eE\-+]/.test(code[i])) i++;
-                    tokens.push({ type: 'number', value: code.substring(start, i) });
-                    continue;
-                }
-                // Identificadores (letras, guión bajo)
-                if (/[a-zA-Z_]/.test(code[i])) {
-                    let start = i;
-                    while (i < n && /[a-zA-Z0-9_]/.test(code[i])) i++;
-                    tokens.push({ type: 'ident', value: code.substring(start, i) });
-                    continue;
-                }
-                // Cualquier otro carácter
-                tokens.push({ type: 'text', value: code[i] });
-                i++;
-            }
-            return tokens;
-        }
-
-        // Extraer nombres de variables locales (definidas con 'local' y parámetros de función)
-        extractLocalNames(code) {
-            const localSet = new Set();
-            // local var, local var = ...
-            const localPattern = /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-            let match;
-            while ((match = localPattern.exec(code)) !== null) {
-                localSet.add(match[1]);
-            }
-            // local function name
-            const localFuncPattern = /\blocal\s+function\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-            while ((match = localFuncPattern.exec(code)) !== null) {
-                localSet.add(match[1]);
-            }
-            // function name(...)
-            const funcPattern = /\bfunction\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g;
-            while ((match = funcPattern.exec(code)) !== null) {
-                localSet.add(match[1]);
-            }
-            // parámetros en funciones: function f(a,b,c)
-            const paramPattern = /\bfunction\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(([^)]*)\)/g;
-            while ((match = paramPattern.exec(code)) !== null) {
-                const params = match[1].split(',').map(p => p.trim()).filter(p => p);
-                params.forEach(p => localSet.add(p));
-            }
-            // parámetros en funciones anónimas: function(a,b,c)
-            const anonymousParam = /\bfunction\s*\(([^)]*)\)/g;
-            while ((match = anonymousParam.exec(code)) !== null) {
-                const params = match[1].split(',').map(p => p.trim()).filter(p => p);
-                params.forEach(p => localSet.add(p));
-            }
-            return Array.from(localSet);
-        }
-
-        // Renombrar identificadores en los tokens (solo los que están en el mapa)
-        renameTokens(tokens, renameMap) {
-            const newTokens = [];
-            for (let t of tokens) {
-                if (t.type === 'ident' && renameMap.has(t.value)) {
-                    newTokens.push({ type: 'ident', value: renameMap.get(t.value) });
-                } else {
-                    newTokens.push(t);
-                }
-            }
-            return newTokens;
-        }
-
-        // Ofuscar número: reemplazar token numérico por expresión matemática equivalente
-        obfuscateNumber(numStr) {
-            const num = parseFloat(numStr);
-            if (isNaN(num)) return numStr;
-            // Plantillas que siempre devuelven el mismo número
-            const templates = [
-                (n) => `(${n}+0)`,
-                (n) => `(${n}*1)`,
-                (n) => `(12002-12001 + ${n-1})`,    // famoso 12002-12001
-                (n) => `(${Math.floor(Math.random()*1000)+1} - ${Math.floor(Math.random()*1000)+1} + ${n})`,
-                (n) => `((${n} * ${Math.floor(Math.random()*8)+2}) / ${Math.floor(Math.random()*8)+2})`,
-                (n) => `(${n} + (${Math.floor(Math.random()*500)} - ${Math.floor(Math.random()*500)}))`,
-                (n) => `(0x0 + ${n})`,
-                (n) => `(12002-12001)*${n}`,
-                (n) => `(${n} + 0) * 1`
-            ];
-            let template = templates[Math.floor(Math.random() * templates.length)];
-            let expr = template(num);
-            // a veces añadir ruido anulado extra
-            if (Math.random() > 0.7) {
-                expr = `(${expr} + ${Math.floor(Math.random()*200)} - ${Math.floor(Math.random()*200)})`;
-            }
-            return expr;
-        }
-
-        // Insertar código basura seguro (no altera el flujo)
-        generateJunk() {
-            const junkTemplates = [
-                "if (false) then local _ = 0 end",
-                "do local _ = 0 end",
-                "local _ = (12002-12001) * math.random() - math.random() + math.random()",
-                "while false do end",
-                "for _=1,0 do end",
-                "local _junk = 0; _junk = nil",
-                "if (12002-12001) == 1 then end"
-            ];
-            // usar nombres únicos para evitar conflictos
-            let junk = junkTemplates[Math.floor(Math.random() * junkTemplates.length)];
-            // reemplazar posibles _ por algo más aleatorio
-            junk = junk.replace(/_/g, this.randomId());
-            return junk + " ; ";
-        }
-
-        // Ofuscación principal
-        obfuscate(code, options) {
-            if (!code.trim()) return "-- empty";
-            let finalCode = code;
-            let renameMap = null;
-
-            // 1. Renombrado de locales
-            if (options.rename) {
-                const localNames = this.extractLocalNames(finalCode);
-                renameMap = new Map();
-                localNames.forEach(name => {
-                    if (!renameMap.has(name)) {
-                        renameMap.set(name, this.randomId());
-                    }
-                });
-                const tokens = this.tokenize(finalCode);
-                const renamedTokens = this.renameTokens(tokens, renameMap);
-                finalCode = renamedTokens.map(t => t.value).join('');
-            }
-
-            // 2. Ofuscar números (solo tokens numéricos fuera de strings/comentarios)
-            if (options.obfNumbers) {
-                const tokens = this.tokenize(finalCode);
-                const newTokens = [];
-                for (let t of tokens) {
-                    if (t.type === 'number') {
-                        const obfExpr = this.obfuscateNumber(t.value);
-                        newTokens.push({ type: 'text', value: obfExpr });
-                    } else {
-                        newTokens.push(t);
-                    }
-                }
-                finalCode = newTokens.map(t => t.value).join('');
-            }
-
-            // 3. Insertar basura (entre líneas, después de puntos y comas o fin de línea)
-            if (options.junk) {
-                const lines = finalCode.split('\n');
-                let newLines = [];
-                for (let i = 0; i < lines.length; i++) {
-                    let line = lines[i];
-                    newLines.push(line);
-                    // insertar basura si la línea no está vacía y no es solo comentario
-                    if (line.trim() && !line.trim().startsWith('--') && Math.random() > 0.65) {
-                        let junkCount = Math.floor(Math.random() * 2) + 1;
-                        let junkLine = "";
-                        for (let j = 0; j < junkCount; j++) {
-                            junkLine += this.generateJunk();
+        // Detectar y decodificar base64 simple (solo si está entre comillas y parece base64)
+        // Nota: esto es muy heurístico y puede romper código. Mejor limitarlo.
+        function decodeBase64Strings(code) {
+            // Buscar cadenas entre comillas que parezcan base64 válido (solo letras, +, /, =)
+            // No es perfecto pero ayuda con ofuscadores que ponen loadstring(base64dec(...))
+            const stringRegex = /(["'])([^"']*?)\1/g;
+            return code.replace(stringRegex, (full, quote, content) => {
+                // si parece base64 (longitud múltiplo de 4, caracteres permitidos)
+                if (content.length % 4 === 0 && /^[A-Za-z0-9+\/=]+$/.test(content)) {
+                    try {
+                        const decoded = atob(content);
+                        // Si el resultado es una string imprimible (no binario raro) la reemplazamos
+                        if (/^[\x20-\x7E\r\n\t]*$/.test(decoded)) {
+                            return quote + decoded + quote;
                         }
-                        newLines.push(junkLine);
+                    } catch(e) { /* no es base64 válido */ }
+                }
+                return full;
+            });
+        }
+
+        // Evaluar expresiones matemáticas constantes muy simples (solo números y operadores básicos)
+        function simplifyConstantMath(code) {
+            // Busca patrones como (1234-567) o 15000-14999 pero solo cuando son operandos numéricos
+            // Evita reemplazar dentro de strings
+            // Hacemos un reemplazo iterativo para resolver operaciones anidadas
+            let changed = true;
+            let iterations = 0;
+            const maxIter = 20;
+            while (changed && iterations < maxIter) {
+                changed = false;
+                // Busca números con operadores + - * / % ^ (solo operandos numéricos constantes)
+                // Patrón: dígitos opcionalmente con punto, operador, dígitos
+                const mathPattern = /(\d+(?:\.\d+)?)\s*([+\-*/%^])\s*(\d+(?:\.\d+)?)/;
+                let newCode = '';
+                let lastIdx = 0;
+                let match;
+                const regex = new RegExp(mathPattern, 'g');
+                // Necesitamos reemplazar dentro del código pero evitando strings. Usamos un enfoque simple: buscar fuera de comillas.
+                // Para no complicar, se asume que las expresiones están fuera de strings.
+                // Haremos un replace con función que evalúa el resultado.
+                let hasMatch = false;
+                code = code.replace(mathPattern, (match, a, op, b) => {
+                    hasMatch = true;
+                    let numA = parseFloat(a);
+                    let numB = parseFloat(b);
+                    let result;
+                    switch(op) {
+                        case '+': result = numA + numB; break;
+                        case '-': result = numA - numB; break;
+                        case '*': result = numA * numB; break;
+                        case '/': result = numA / numB; break;
+                        case '%': result = numA % numB; break;
+                        case '^': result = Math.pow(numA, numB); break;
+                        default: return match;
                     }
+                    // Si el resultado es entero, mostrarlo sin decimales
+                    if (Math.abs(result - Math.round(result)) < 1e-10) result = Math.round(result);
+                    return result.toString();
+                });
+                if (hasMatch) changed = true;
+                iterations++;
+            }
+            return code;
+        }
+
+        // Eliminación básica de código basura: variables asignadas pero nunca usadas (solo alcance global simplista)
+        // Esto es muy limitado; para un desofuscador real se necesita análisis de flujo.
+        // Por ahora solo eliminamos líneas que contengan operaciones aritméticas cuyo resultado no se asigna a nada (ej. 1+1)
+        function removeJunkLines(code) {
+            // Eliminar líneas que consistan solo en una expresión matemática sin asignación, ej: "1+1;"
+            // También eliminar asignaciones a variables que nunca se leen? difícil sin análisis completo.
+            // Hacemos un barrido simple:
+            let lines = code.split('\n');
+            let newLines = [];
+            for (let line of lines) {
+                let trimmed = line.trim();
+                // Si es una expresión matemática de constantes sola (sin asignación)
+                if (/^\d+(?:[+\-*/%^]\d+)+$/.test(trimmed.replace(/\s/g, ''))) {
+                    continue; // descartar
                 }
-                finalCode = newLines.join('\n');
-            }
-
-            // 4. Envoltorio VM (convierte el script en una cadena y lo ejecuta con loadstring)
-            if (options.vmWrapper) {
-                finalCode = this.wrapWithVM(finalCode);
-            }
-
-            // 5. Minificar
-            if (options.minify) {
-                finalCode = finalCode.replace(/\n\s*\n/g, '\n').replace(/\s+/g, ' ').trim();
-            }
-
-            return finalCode;
-        }
-
-        // VM que reconstruye el código original usando una tabla de caracteres ofuscados con expresiones matemáticas
-        wrapWithVM(script) {
-            // Convertir cada carácter del script a una expresión matemática que devuelva su código
-            const chars = script.split('');
-            const charExprs = [];
-            for (let ch of chars) {
-                const codePoint = ch.charCodeAt(0);
-                let expr;
-                const r = () => Math.floor(Math.random() * 500) + 100;
-                const variant = Math.floor(Math.random() * 6);
-                switch(variant) {
-                    case 0: expr = `(${codePoint} + ${r()} - ${r()})`; break;
-                    case 1: expr = `(12002-12001 + ${codePoint-1})`; break;
-                    case 2: expr = `(${codePoint} * (${Math.floor(Math.random()*9)+2}) / (${Math.floor(Math.random()*9)+2}))`; break;
-                    case 3: expr = `(${codePoint} + 0x0)`; break;
-                    case 4: expr = `(${Math.floor(Math.random()*9000)} - ${Math.floor(Math.random()*9000)} + ${codePoint})`; break;
-                    default: expr = `(${codePoint} + 0)`;
+                // Si es una línea que contiene math.random() y no se asigna a nada
+                if (trimmed.includes('math.random') && !trimmed.includes('=')) {
+                    continue;
                 }
-                charExprs.push(`string.char(${expr})`);
+                newLines.push(line);
             }
-            // Generar código VM
-            const vm = `
---[=[ VM con caos matemático (ejecución segura) ]=]
-local _T = {}
-${charExprs.map((e, idx) => `_T[${idx+1}] = ${e}`).join(';\n')}
-local _FINAL = table.concat(_T)
-local _fn = loadstring(_FINAL)
-if _fn then _fn() end
-`;
-            return vm;
+            return newLines.join('\n');
         }
-    }
 
-    // --------------------- UI ---------------------
-    const obf = new SafeLuaObfuscator();
-    const inputArea = document.getElementById('inputCode');
-    const outputArea = document.getElementById('outputCode');
-    const statusDiv = document.getElementById('statusMsg');
-    const obfBtn = document.getElementById('obfuscateBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const testBtn = document.getElementById('testBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const copyBtn = document.getElementById('copyBtn');
-
-    const inLines = document.getElementById('inLines');
-    const inChars = document.getElementById('inChars');
-    const inLocals = document.getElementById('inLocals');
-    const outLines = document.getElementById('outLines');
-    const outChars = document.getElementById('outChars');
-    const outRatio = document.getElementById('outRatio');
-
-    function updateInputStats() {
-        let code = inputArea.value;
-        let lines = code.split('\n').length;
-        let chars = code.length;
-        let locals = (code.match(/\blocal\s+\w+/g) || []).length + (code.match(/\bfunction\s+\w+/g) || []).length;
-        inLines.innerText = lines;
-        inChars.innerText = chars;
-        inLocals.innerText = locals;
-    }
-
-    function updateOutputStats(code) {
-        if (!code) {
-            outLines.innerText = "0";
-            outChars.innerText = "0";
-            outRatio.innerText = "0%";
-            return;
+        // Desofuscación principal
+        function deobfuscate(script) {
+            if (!script.trim()) {
+                throw new Error('El script está vacío');
+            }
+            let code = script;
+            // 1. Decodificar escapes decimales/hex
+            code = decodeEscapedStrings(code);
+            // 2. Intentar decodificar base64 (peligroso pero a veces ayuda)
+            code = decodeBase64Strings(code);
+            // 3. Simplificar constantes matemáticas
+            code = simplifyConstantMath(code);
+            // 4. Eliminar basura muy evidente
+            code = removeJunkLines(code);
+            // 5. Adicional: si hay loadstring con base64, intentar extraer
+            // Patrón loadstring(base64dec(...)) -> decodificar y reemplazar
+            const loadBase64Pattern = /loadstring\(([^)]+)\)/g;
+            code = code.replace(loadBase64Pattern, (match, inner) => {
+                // Si inner contiene base64.decode o similar, pero no vamos a implementar un evaluador.
+                // Simplemente dejamos como está, el usuario puede verlo.
+                return match;
+            });
+            return code;
         }
-        let lines = code.split('\n').length;
-        let chars = code.length;
-        let originalLen = inputArea.value.length;
-        let ratio = originalLen ? Math.round((chars / originalLen) * 100) : 0;
-        outLines.innerText = lines;
-        outChars.innerText = chars;
-        outRatio.innerText = ratio + "%";
-    }
 
-    function obfuscateAction() {
-        let code = inputArea.value;
-        if (!code.trim()) {
-            statusDiv.innerHTML = "❌ Error: ingresa código Lua (Roblox)";
-            statusDiv.style.borderLeftColor = "#ff5555";
-            return;
-        }
-        statusDiv.innerHTML = "🌀 Ofuscando con técnicas seguras (renombrado, números, basura, VM)...";
-        statusDiv.style.borderLeftColor = "#ffff88";
-        setTimeout(() => {
+        function handleDeobfuscate() {
+            const input = inputArea.value;
+            if (!input.trim()) {
+                showStatus('❌ No hay script para desofuscar', true);
+                return;
+            }
+            showStatus('🔄 Procesando...');
             try {
-                const options = {
-                    rename: document.getElementById('optRename').checked,
-                    obfNumbers: document.getElementById('optNumbers').checked,
-                    junk: document.getElementById('optJunk').checked,
-                    vmWrapper: document.getElementById('optVM').checked,
-                    minify: document.getElementById('optMinify').checked
-                };
-                let obfCode = obf.obfuscate(code, options);
-                outputArea.value = obfCode;
-                updateOutputStats(obfCode);
-                statusDiv.innerHTML = "✅ ¡Ofuscación completada! El código mantiene su funcionalidad original.";
-                statusDiv.style.borderLeftColor = "#88ff88";
+                const result = deobfuscate(input);
+                outputArea.value = result;
+                showStatus('✅ Desofuscación básica completada. Revisa el resultado.');
             } catch (err) {
-                statusDiv.innerHTML = `🔥 Error inesperado: ${err.message}`;
-                statusDiv.style.borderLeftColor = "#ff5555";
                 console.error(err);
+                showStatus('❌ Error durante la desofuscación: ' + err.message, true);
+                outputArea.value = '';
             }
-        }, 30);
-    }
-
-    function downloadScript() {
-        let code = outputArea.value;
-        if (!code.trim()) {
-            statusDiv.innerHTML = "⚠️ No hay código ofuscado. Ofusca primero.";
-            return;
         }
-        const blob = new Blob([code], { type: "text/plain" });
-        const a = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = "safe_obfuscated.lua";
-        a.click();
-        URL.revokeObjectURL(url);
-        statusDiv.innerHTML = "📁 Script descargado como safe_obfuscated.lua";
-    }
 
-    function testSimulation() {
-        let code = outputArea.value;
-        if (!code.trim()) {
-            statusDiv.innerHTML = "❌ No hay código ofuscado para probar.";
-            return;
+        function handleClear() {
+            inputArea.value = '';
+            outputArea.value = '';
+            showStatus('🧹 Limpiado');
         }
-        // Verificación rápida de sintaxis (simulación)
-        if (code.includes("loadstring") || code.includes("string.char")) {
-            statusDiv.innerHTML = "✅ SIMULACIÓN: El script contiene capas de ofuscación. En Roblox se ejecutará el código original correctamente (mantiene comportamiento).";
-        } else {
-            statusDiv.innerHTML = "✅ SIMULACIÓN: El script ofuscado es válido. Debería ejecutarse sin errores.";
-        }
-        statusDiv.style.borderLeftColor = "#ccaaff";
-        setTimeout(() => statusDiv.style.borderLeftColor = "#88ff88", 1500);
-    }
 
-    function clearAll() {
-        inputArea.value = "";
-        outputArea.value = "";
-        updateInputStats();
-        updateOutputStats("");
-        statusDiv.innerHTML = "🧹 Todo limpiado. Listo para nueva ofuscación.";
-        statusDiv.style.borderLeftColor = "#88ffcc";
-    }
-
-    function copyOutput() {
-        let code = outputArea.value;
-        if (!code) {
-            statusDiv.innerHTML = "📭 Nada que copiar";
-            return;
-        }
-        navigator.clipboard.writeText(code).then(() => {
-            statusDiv.innerHTML = "📋 Código ofuscado copiado al portapapeles.";
-        }).catch(() => {
+        function handleCopy() {
+            if (!outputArea.value) {
+                showStatus('No hay resultado para copiar', true);
+                return;
+            }
             outputArea.select();
             document.execCommand('copy');
-            statusDiv.innerHTML = "📋 Copiado (método alternativo)";
-        });
-    }
+            showStatus('📋 Copiado al portapapeles');
+        }
 
-    inputArea.addEventListener('input', updateInputStats);
-    obfBtn.addEventListener('click', obfuscateAction);
-    downloadBtn.addEventListener('click', downloadScript);
-    testBtn.addEventListener('click', testSimulation);
-    clearBtn.addEventListener('click', clearAll);
-    copyBtn.addEventListener('click', copyOutput);
-
-    // Ejemplo inicial
-    inputArea.value = `-- Script Roblox funcional
-local Players = game:GetService("Players")
-local localPlayer = Players.LocalPlayer
-
-local function teleportToSpawn()
-    localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
-end
-
-teleportToSpawn()
-print("Exploit listo")`;
-    updateInputStats();
-    statusDiv.innerHTML = "🔮 Ofuscador robusto activado | El código final conserva su comportamiento original.";
+        deobfBtn.addEventListener('click', handleDeobfuscate);
+        clearBtn.addEventListener('click', handleClear);
+        copyBtn.addEventListener('click', handleCopy);
+    })();
 </script>
 </body>
 </html>
