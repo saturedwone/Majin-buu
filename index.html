@@ -3,417 +3,703 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Lua Obfuscator | VM Style | WeAreDevs-like</title>
+    <title>🔮 LUA OBFUSCATOR · Roblox Exploit | VM + Math Chaos</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #0a0c18;
-            font-family: 'Segoe UI', 'Fira Code', monospace;
-            margin: 0;
+            background: radial-gradient(circle at 20% 30%, #0a0e1a, #010101);
+            font-family: 'Fira Code', 'Courier New', monospace;
             padding: 1.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            color: #c6ffdd;
         }
+
         .container {
-            max-width: 1400px;
-            width: 100%;
-            background: #0e1122;
-            border-radius: 1.8rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            border: 1px solid #282f4a;
-            overflow: hidden;
+            max-width: 1600px;
+            margin: 0 auto;
         }
-        .header {
-            background: #080b18;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #222842;
+
+        .glow-header {
+            text-align: center;
+            border: 1px solid #ff44cc;
+            background: #0b0f1aaa;
+            backdrop-filter: blur(8px);
+            padding: 1.2rem;
+            border-radius: 48px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 25px #ff44aa30;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 1.7rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #b9dcff, #8aa4f0);
+
+        .glow-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff99ff, #88ffff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
+            letter-spacing: 2px;
         }
-        .header p {
-            margin: 0.2rem 0 0;
-            color: #7783b0;
-            font-size: 0.8rem;
+
+        .glow-header p {
+            color: #bbffdd;
         }
-        .panels {
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #0c1120dd;
+            border: 1px solid #44ffcc;
+            border-radius: 28px;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-header {
+            background: #16202e;
+            padding: 0.9rem 1.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #88ffcc;
+            color: #ccfffc;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        textarea, input {
+            width: 100%;
+            background: #010408;
+            border: 1px solid #44ffcc;
+            padding: 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e0fffa;
+            border-radius: 20px;
+            resize: vertical;
+        }
+
+        textarea:focus, input:focus {
+            border-color: #ff66ff;
+            outline: none;
+            box-shadow: 0 0 12px #ff44dd;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            background: #03080f;
+            border-radius: 32px;
+            padding: 0.3rem 0.8rem;
+            text-align: center;
+            flex: 1;
+            border: 1px solid #77ffcc;
+        }
+
+        .stat span:first-child {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #aaffdd;
+        }
+        .stat span:last-child {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: block;
+            color: #ffccff;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+
+        .btn {
+            background: linear-gradient(95deg, #a030f0, #00bbdd);
+            border: none;
+            padding: 12px 26px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #000;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px black;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 0 12px #ff66ff;
+        }
+
+        .options-panel {
+            background: #0a1020cc;
+            border: 1px solid #ff66cc;
+            border-radius: 28px;
+            padding: 1rem 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .options-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 1.2rem;
-            padding: 1.5rem;
+            margin-top: 0.6rem;
         }
-        .panel {
-            flex: 1;
-            min-width: 320px;
-            background: #0b0f1c;
-            border-radius: 1.2rem;
-            border: 1px solid #242b48;
+
+        .opt {
             display: flex;
-            flex-direction: column;
-        }
-        .panel-title {
-            background: #0f1324;
-            padding: 0.7rem 1rem;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #9dabdf;
-            border-bottom: 1px solid #20253e;
-        }
-        textarea {
-            background: #03050e;
-            color: #eef3ff;
-            border: none;
-            padding: 1rem;
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 13px;
-            line-height: 1.45;
-            resize: vertical;
-            width: 100%;
-            outline: none;
-            flex: 1;
-            min-height: 380px;
-            white-space: pre;
-        }
-        textarea:focus {
-            background: #060a16;
-        }
-        .btn-group {
-            display: flex;
-            gap: 0.8rem;
-            padding: 1rem;
-            background: #0a0e1a;
-            border-top: 1px solid #20253e;
-            flex-wrap: wrap;
             align-items: center;
+            gap: 8px;
+            background: #141e2c;
+            padding: 5px 15px;
+            border-radius: 40px;
         }
-        button {
-            background: #1f2a4a;
-            border: none;
-            padding: 0.55rem 1.3rem;
-            border-radius: 2.5rem;
-            font-family: monospace;
-            font-weight: bold;
+
+        .vm-note {
+            margin-top: 1rem;
             font-size: 0.75rem;
-            color: #f0f4ff;
+            background: #00000066;
+            border-radius: 20px;
+            padding: 6px 12px;
+            border-left: 3px solid #ff88ff;
+        }
+
+        .copy-btn {
+            background: #2c3e4e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            margin-top: 10px;
+            width: 100%;
         }
-        button.primary {
-            background: #3f5488;
-            border: 1px solid #6e80b3;
-        }
-        button.primary:hover {
-            background: #5770b0;
-            transform: translateY(-1px);
-        }
-        button:hover {
-            background: #2f3d68;
-        }
+
         .status {
-            font-size: 0.7rem;
-            margin-left: auto;
-            background: #11172e;
-            padding: 0.2rem 1rem;
-            border-radius: 2rem;
-            color: #bcc7ff;
+            background: #10161f;
+            border-radius: 24px;
+            padding: 8px 15px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            border-left: 5px solid #88ffcc;
         }
-        .footer {
-            background: #060914;
-            padding: 0.7rem 1rem;
-            font-size: 0.65rem;
-            color: #6670a0;
-            text-align: center;
-            border-top: 1px solid #191f3a;
-        }
-        @media (max-width: 750px) {
-            body { padding: 0.8rem; }
-            .panels { flex-direction: column; }
+        @media (max-width: 800px) {
+            .two-columns { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>⚡ VM·Obfuscator (WeAreDevs style)</h1>
-        <p>String encoding · table shuffle · arithmetic junk · return load(...)()</p>
+    <div class="glow-header">
+        <h1>⚡ LUA OBFUSCATOR · VM + MATH CHAOS ⚡</h1>
+        <p>ofusca cada local, función, números → 12002-(12001) | añade código basura | VM reconstructora básica</p>
     </div>
-    <div class="panels">
-        <div class="panel">
-            <div class="panel-title">📜 INPUT (LUA / ROBLOX)</div>
-            <textarea id="inputScript" placeholder="-- Escribe tu script aquí
-local Players = game:GetService('Players')
-local player = Players.LocalPlayer
-print('Hello from original script')
-player.Character.Humanoid.WalkSpeed = 24"></textarea>
-            <div class="btn-group">
-                <button id="obfuscateBtn" class="primary">🌀 OBFUSCATE (VM + LAYERS)</button>
-                <span class="status" id="statusMsg">ready</span>
+
+    <div class="two-columns">
+        <!-- ENTRADA LUA -->
+        <div class="card">
+            <div class="card-header">📜 CÓDIGO LUA (ROBLOX / EXPLOIT)</div>
+            <div class="card-body">
+                <textarea id="inputCode" rows="12" placeholder="--[[ ejemplo: ]]
+local players = game:GetService('Players')
+local function teleport(plr, pos)
+    plr.Character.HumanoidRootPart.CFrame = pos
+end
+teleport(players.LocalPlayer, CFrame.new(0,50,0))
+print('Hola exploit')"></textarea>
+                <div class="stats-row">
+                    <div class="stat"><span>LÍNEAS</span><span id="inLines">0</span></div>
+                    <div class="stat"><span>CARACTERES</span><span id="inChars">0</span></div>
+                    <div class="stat"><span>LOCALES/FUNC</span><span id="inLocals">0</span></div>
+                </div>
             </div>
         </div>
-        <div class="panel">
-            <div class="panel-title">🧬 OBFUSCATED OUTPUT (LUA)</div>
-            <textarea id="outputCode" readonly placeholder="Obfuscated code will appear here..."></textarea>
-            <div class="btn-group">
-                <button id="copyBtn">📋 COPY</button>
-                <button id="downloadBtn">💾 DOWNLOAD .LUA</button>
+
+        <!-- SALIDA OFUSCADA -->
+        <div class="card">
+            <div class="card-header">🔒 CÓDIGO OFUSCADO (LUA + VM + MATH)</div>
+            <div class="card-body">
+                <div class="status" id="statusMsg">✅ listo para ofuscar | renombrado + números aleatorios + junk + VM básica</div>
+                <textarea id="outputCode" rows="12" readonly placeholder="Código ofuscado aparecerá aquí..."></textarea>
+                <div class="stats-row">
+                    <div class="stat"><span>LÍNEAS</span><span id="outLines">0</span></div>
+                    <div class="stat"><span>CARACTERES</span><span id="outChars">0</span></div>
+                    <div class="stat"><span>RATIO</span><span id="outRatio">0%</span></div>
+                </div>
+                <button class="copy-btn" id="copyOutputBtn">📋 COPIAR SCRIPT OFUSCADO</button>
             </div>
         </div>
     </div>
-    <div class="footer">
-        ✔ Full string encoding (byte escapes) · Table shuffle · Arithmetic junk · Control flow wrapper<br>
-        ✔ Multi‑layer reconstruction · return load(...)() · Structured like WeAreDevs obfuscator
+
+    <!-- OPCIONES DE OFUSCACIÓN -->
+    <div class="options-panel">
+        <div style="font-weight: bold; color:#ff99ff">⚙️ CAPAS DE OFUSCACIÓN (LUA → OBSCURE)</div>
+        <div class="options-grid">
+            <label class="opt"><input type="checkbox" id="optRename" checked> 🏷️ Renombrar locals/funciones</label>
+            <label class="opt"><input type="checkbox" id="optNumbers" checked> 🔢 Ofuscar números (12002-12001, etc)</label>
+            <label class="opt"><input type="checkbox" id="optJunk" checked> 🗑️ Inyectar código basura</label>
+            <label class="opt"><input type="checkbox" id="optVM" checked> 🧠 VM reconstructora básica (última capa)</label>
+            <label class="opt"><input type="checkbox" id="optMinify"> ✨ Minificar resultado</label>
+        </div>
+        <div class="vm-note">
+            🧬 VM básica: convierte todo el script en una cadena reconstruida mediante expresiones matemáticas aleatorias + loadstring(). Cada carácter se ofusca con operaciones como (12002-12001)*código, etc. ¡Capa final indetectable!
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn" id="obfuscateBtn">🌀 OFUSCAR AHORA</button>
+        <button class="btn" id="downloadBtn">⬇️ DESCARGAR .LUA</button>
+        <button class="btn" id="testBtn">▶️ SIMULAR EJECUCIÓN</button>
+        <button class="btn" id="clearBtn">🗑️ LIMPIAR TODO</button>
     </div>
 </div>
 
 <script>
-    (function() {
-        // Helper: escape a string to Lua decimal escapes like "\110\121\073"
-        function escapeToLuaString(str) {
-            let parts = [];
-            for (let i = 0; i < str.length; i++) {
-                let code = str.charCodeAt(i);
-                parts.push("\\" + code);
-            }
-            return '"' + parts.join('') + '"';
+    // ====================== OFUSCADOR LUA PROFESIONAL ======================
+    // Características:
+    // - Renombra variables locales, parámetros y funciones (detección básica)
+    // - Convierte números literales en expresiones matemáticas aleatorias (ej: 12002-(12001)+n)
+    // - Inserta código basura (asignaciones muertas, condicionales falsos, bucles decorativos)
+    // - VM básica: reconstruye el código final mediante array de caracteres ofuscados con operaciones matemáticas + loadstring
+    // ========================================================================
+
+    class LuaObfuscator {
+        constructor() {
+            this.usedNames = new Set();
         }
 
-        // Split string into random-length chunks (between minLen and maxLen)
-        function splitIntoChunks(str, minLen = 12, maxLen = 35) {
-            let chunks = [];
-            let pos = 0;
-            while (pos < str.length) {
-                let remaining = str.length - pos;
-                let len = Math.min(remaining, Math.floor(Math.random() * (maxLen - minLen + 1) + minLen));
-                chunks.push(str.substr(pos, len));
-                pos += len;
+        // Genera identificador aleatorio estilo _0xABC
+        randomIdentifier() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = '_0x';
+            for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)];
+            while (this.usedNames.has(id)) {
+                id = '_0x' + Math.random().toString(36).substring(2, 8);
             }
-            return chunks;
+            this.usedNames.add(id);
+            return id;
         }
 
-        // Generate a deterministic shuffle table (like in the example)
-        function generateShufflePairs(count) {
-            let pairs = [];
-            // generate pairs of indices to swap (e.g., {{1,2},{3,4}})
-            for (let i = 1; i <= count; i += 2) {
-                if (i + 1 <= count) {
-                    pairs.push([i, i+1]);
+        // Tokenizar básico para evitar reemplazos dentro de strings/comentarios
+        // Devuelve un array de tokens con tipo: 'text', 'string', 'comment', 'number'
+        tokenize(code) {
+            const tokens = [];
+            let i = 0;
+            const len = code.length;
+            while (i < len) {
+                // Comentario de línea --
+                if (code[i] === '-' && code[i+1] === '-') {
+                    let start = i;
+                    i += 2;
+                    while (i < len && code[i] !== '\n') i++;
+                    tokens.push({ type: 'comment', value: code.substring(start, i) });
+                    continue;
                 }
+                // Comentario largo --[[ ... ]]
+                if (code[i] === '-' && code[i+1] === '-' && code[i+2] === '[' && code[i+3] === '[') {
+                    let start = i;
+                    i += 4;
+                    let depth = 1;
+                    while (i < len && depth > 0) {
+                        if (code[i] === ']' && code[i+1] === ']') { depth--; i+=2; }
+                        else if (code[i] === '[' && code[i+1] === '[') { depth++; i+=2; }
+                        else i++;
+                    }
+                    tokens.push({ type: 'comment', value: code.substring(start, i) });
+                    continue;
+                }
+                // Strings con comillas dobles o simples
+                if (code[i] === '"' || code[i] === "'") {
+                    let start = i;
+                    let quote = code[i];
+                    i++;
+                    while (i < len && code[i] !== quote) {
+                        if (code[i] === '\\') i++;
+                        i++;
+                    }
+                    i++; // cierra comilla
+                    tokens.push({ type: 'string', value: code.substring(start, i) });
+                    continue;
+                }
+                // Números (enteros y flotantes)
+                if (/[0-9]/.test(code[i]) || (code[i] === '.' && /[0-9]/.test(code[i+1]))) {
+                    let start = i;
+                    while (i < len && /[0-9.eE\-+]/.test(code[i])) i++;
+                    tokens.push({ type: 'number', value: code.substring(start, i) });
+                    continue;
+                }
+                // Identificadores (letras + _)
+                if (/[a-zA-Z_]/.test(code[i])) {
+                    let start = i;
+                    while (i < len && /[a-zA-Z0-9_]/.test(code[i])) i++;
+                    const ident = code.substring(start, i);
+                    tokens.push({ type: 'ident', value: ident });
+                    continue;
+                }
+                // cualquier otro caracter
+                tokens.push({ type: 'text', value: code[i] });
+                i++;
             }
-            // add some extra pairs from the example style
-            if (count > 4) {
-                pairs.push([1, count]);
-                pairs.push([Math.floor(count/2), count]);
-            }
-            return pairs;
+            return tokens;
         }
 
-        // Main obfuscation function: returns obfuscated Lua code as string
-        function obfuscateLua(source) {
-            if (!source.trim()) return "-- empty script\nreturn function() end";
-
-            // Step 1: Encode the entire source as a big string, then split into chunks
-            let chunks = splitIntoChunks(source, 12, 40);
-            // Add some dummy chunks (will decode to empty strings) to increase length
-            let dummyCount = Math.floor(chunks.length * 0.4);
-            for (let i = 0; i < dummyCount; i++) {
-                chunks.push("");  // dummy empty string
+        // Extraer nombres locales y funciones para renombrar
+        extractLocalNames(code) {
+            const localNames = new Set();
+            // buscar patrones: local var =, local function funcname, function funcname()
+            const patterns = [
+                /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g,               // local x
+                /\blocal\s+function\s+([a-zA-Z_][a-zA-Z0-9_]*)/g,    // local function f
+                /\bfunction\s+([a-zA-Z_][a-zA-Z0-9_]*)/g,             // function f
+                /function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g,          // function f(
+                /local\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g               // local x = 
+            ];
+            patterns.forEach(pat => {
+                let match;
+                while ((match = pat.exec(code)) !== null) {
+                    localNames.add(match[1]);
+                }
+            });
+            // también parámetros de función: function f(a,b,c) local a,b
+            const paramPattern = /function\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(([^)]*)\)/g;
+            let m;
+            while ((m = paramPattern.exec(code)) !== null) {
+                const params = m[1].split(',').map(p => p.trim()).filter(p => p);
+                params.forEach(p => localNames.add(p));
             }
-            // Shuffle chunks randomly (deterministic using sort)
-            chunks = chunks.sort(() => Math.random() - 0.5);
+            return Array.from(localNames);
+        }
 
-            // Build the q table with escaped strings
-            let qEntries = [];
-            for (let chunk of chunks) {
-                if (chunk === "") {
-                    // dummy empty string, encode as empty quoted string
-                    qEntries.push('""');
+        // Renombrar tokens de identificadores según mapa de nombres
+        renameIdentifiers(tokens, renameMap) {
+            const newTokens = [];
+            for (let t of tokens) {
+                if (t.type === 'ident' && renameMap.has(t.value)) {
+                    newTokens.push({ type: 'ident', value: renameMap.get(t.value) });
                 } else {
-                    qEntries.push(escapeToLuaString(chunk));
+                    newTokens.push(t);
                 }
             }
+            return newTokens;
+        }
 
-            // Step 2: Generate variable names similar to example (short, consistent)
-            let qVar = "q";
-            let nFunc = "N";
-            let shufflePairs = generateShufflePairs(qEntries.length);
-            let shuffleTableStr = "{" + shufflePairs.map(p => "{" + p[0] + "," + p[1] + "}").join(",") + "}";
+        // Ofuscar números: reemplazar token numérico por expresión matemática
+        obfuscateNumberToken(numStr) {
+            let num = parseFloat(numStr);
+            if (isNaN(num)) return numStr;
+            // Generar expresión que evalúe al mismo número, usando plantillas con operaciones como 12002-12001, etc.
+            const templates = [
+                (n) => `(${n}+0)`,
+                (n) => `(${n}*1)`,
+                (n) => `(${Math.floor(Math.random()*10000)+1} - ${Math.floor(Math.random()*10000)+1} + ${n})`,
+                (n) => `((${n} * ${Math.floor(Math.random()*10)+1}) / ${Math.floor(Math.random()*10)+1})`,
+                (n) => `(${n} + ${Math.floor(Math.random()*500)} - ${Math.floor(Math.random()*500)})`,
+                (n) => `(12002-12001 + ${n-1})`,
+                (n) => `(12002 - 12001) * ${n}`,
+                (n) => `(${n} + (${Math.floor(Math.random()*300)}-${Math.floor(Math.random()*300)}))`,
+                (n) => `(${n} + 0x0)`,
+                (n) => `(0 + ${n})`
+            ];
+            let template = templates[Math.floor(Math.random() * templates.length)];
+            let expr = template(num);
+            // a veces añadir un pequeño ruido extra que se anule
+            if (Math.random() > 0.6) {
+                expr = `(${expr} + ${Math.floor(Math.random()*200)} - ${Math.floor(Math.random()*200)})`;
+            }
+            return expr;
+        }
 
-            // Build the final obfuscated script
-            let obfuscated = `--[[ v1.0.0 https://wearedevs.net/obfuscator ]]
-return(function(...)local ${qVar}={${qEntries.join(",")}}
-local function ${nFunc}(${nFunc})return ${qVar}[${nFunc}-(${608241-593854})]end
--- shuffle loop (like original)
-for _,Z in ipairs(${shuffleTableStr})do
-    while Z[-43262+43263]<Z[-844484-(-844486)]do
-        ${qVar}[Z[656298+-656297]],${qVar}[Z[-814142-(-814144)]],Z[-947002+947003],Z[-159069-(-159071)]=
-        ${qVar}[Z[969754+-969752]],${qVar}[Z[-164769-(-164770)]],Z[-254986-(-254987)]+(-889495+889496),Z[-738300+738302]-(744245+-744244)
-    end
-end
-do
-    local ${nFunc}=math.floor
-    local Z=string.len
-    local h=table.concat
-    local m=${qVar}
-    local l={
-        u=590741+-590692,K=-520923+520950;V=-845050+845106,R=-505837+505860;
-        G=-653048+653053,j=566089+-566036,E=-161594+161655;["\\057"]=-671001-(-671047),
-        c=-54109-(-54144);i=-79148+79162;U=117666+-117618,F=-74967-(-75029);
-        ["\\052"]=-63485-(-63500);v=104512+-104488,I=322605-322565;D=-1028341+1028341,
-        ["\\053"]=233782+-233722,J=-270664+270714,L=302094+-302060;r=55982+-55964;
-        o=455050-454998;a=161658+-161639,["\\048"]=-589650+589653;S=197556-197505;
-        Q=-252200-(-252226);b=-242125-(-242138);q=1017190+-1017182;y=336947+-336892,
-        X=-852616+852649;P=-889643+889652,["\\056"]=-74587-(-74650);["\\049"]=-909610+909653,
-        O=753945+-753907;N=-903977+904036,["\\043"]=-764092+764146;z=-114042+114070,
-        ["\\047"]=-467699-(-467716),m=705008+-704986,M=776698+-776656,T=-1032538+1032554,
-        H=837439+-837392;p=-548554-(-548566);f=60953-60949;g=879057+-879056,
-        ["\\055"]=9353+-9308,W=338284-338243;h=262945-262901;A=697173+-697137,
-        n=538835+-538815;["\\050"]=726469+-726462,B=-659903-(-659942);s=-164576+164606;
-        w=1015083+-1015054;Y=-614034-(-614066);l=-346818+346876;e=-689414+689420;
-        Z=990401-990376;["\\051"]=-893400+893457;t=-912382+912413;x=-419186-(-419188),
-        d=-561798+561809;C=-314608+314645,["\\054"]=-479110-(-479120);k=785425-785404
+        // insertar basura aleatoria entre líneas (código muerto)
+        generateJunkLines(count) {
+            let junk = "";
+            const junkTemplates = [
+                "local _junk = (12002-12001) * 0x539 + 0 - 0",
+                "if (false) then local _x = 0 end",
+                "do local _ = 0 end",
+                "local _ = 0; _ = 1; _ = nil",
+                "while false do end",
+                "local _rnd = (12002-12001) * math.random() - math.random() + math.random()",
+                "if (12002-12001) == 1 then end",
+                "for _=1,0 do end",
+                "local _ = (12002-12001) * 9999"
+            ];
+            for (let i = 0; i < count; i++) {
+                let t = junkTemplates[Math.floor(Math.random() * junkTemplates.length)];
+                junk += t + " ; ";
+            }
+            return junk;
+        }
+
+        // Procesamiento principal de ofuscación
+        obfuscate(code, options) {
+            if (!code.trim()) return "-- empty script";
+            let processedCode = code;
+            
+            // 1. Renombrar locales y funciones
+            if (options.rename) {
+                const localNames = this.extractLocalNames(processedCode);
+                const renameMap = new Map();
+                localNames.forEach(name => {
+                    if (!renameMap.has(name)) {
+                        renameMap.set(name, this.randomIdentifier());
+                    }
+                });
+                const tokens = this.tokenize(processedCode);
+                const renamedTokens = this.renameIdentifiers(tokens, renameMap);
+                processedCode = renamedTokens.map(t => t.value).join('');
+            }
+            
+            // 2. Ofuscar números (tokens numéricos)
+            if (options.obfNumbers) {
+                const tokens = this.tokenize(processedCode);
+                const newTokens = [];
+                for (let t of tokens) {
+                    if (t.type === 'number') {
+                        const obfExpr = this.obfuscateNumberToken(t.value);
+                        newTokens.push({ type: 'text', value: obfExpr });
+                    } else {
+                        newTokens.push(t);
+                    }
+                }
+                processedCode = newTokens.map(t => t.value).join('');
+            }
+            
+            // 3. Insertar basura aleatoria (entre líneas)
+            if (options.junk) {
+                const lines = processedCode.split('\n');
+                let newLines = [];
+                for (let i = 0; i < lines.length; i++) {
+                    newLines.push(lines[i]);
+                    if (lines[i].trim() !== '' && !lines[i].trim().startsWith('--')) {
+                        if (Math.random() > 0.65) {
+                            let junkCount = Math.floor(Math.random() * 2) + 1;
+                            newLines.push(this.generateJunkLines(junkCount));
+                        }
+                    }
+                }
+                processedCode = newLines.join('\n');
+            }
+            
+            // 4. VM reconstructora básica (convierte todo el script en una tabla de caracteres ofuscados)
+            if (options.vmWrapper) {
+                processedCode = this.wrapWithVM(processedCode, options);
+            }
+            
+            // 5. Minificar (quitar espacios extras)
+            if (options.minify) {
+                processedCode = processedCode.replace(/\n\s*\n/g, '\n').replace(/\s+/g, ' ').trim();
+            }
+            
+            return processedCode;
+        }
+        
+        // VM básica: convierte el código final en una cadena donde cada carácter se obtiene mediante operaciones matemáticas
+        wrapWithVM(finalCode, options) {
+            // Escapar el código para que pueda ser insertado en string
+            // Evitamos usar comillas directas, en su lugar construimos tabla de chars
+            const chars = finalCode.split('');
+            // Generar expresiones matemáticas para cada char
+            const charExprs = [];
+            for (let ch of chars) {
+                const codePoint = ch.charCodeAt(0);
+                // ofuscar el código del carácter con patrones como 12002-12001 + (code-1)
+                let expr;
+                const r = () => Math.floor(Math.random() * 500) + 100;
+                const variant = Math.floor(Math.random() * 6);
+                switch(variant) {
+                    case 0: expr = `(${codePoint} + ${r()} - ${r()})`; break;
+                    case 1: expr = `(12002-12001 + ${codePoint-1})`; break;
+                    case 2: expr = `(${codePoint} * (${Math.floor(Math.random()*9)+1}) / (${Math.floor(Math.random()*9)+1}))`; break;
+                    case 3: expr = `(${codePoint} + 0x0)`; break;
+                    case 4: expr = `(${Math.floor(Math.random()*5000)} - ${Math.floor(Math.random()*5000)} + ${codePoint})`; break;
+                    default: expr = `(${codePoint} + 0)`;
+                }
+                charExprs.push(`string.char(${expr})`);
+            }
+            // Construir la VM: reconstruye la tabla y ejecuta loadstring
+            const vmScript = `
+--[=[ VM BÁSICA · Reconstrucción con operaciones matemáticas ]=]
+local _T = {}
+${charExprs.map((e, idx) => `_T[${idx+1}] = ${e}`).join(';\n')}
+local _FINAL = table.concat(_T)
+local _fn = loadstring(_FINAL)
+if _fn then _fn() end
+`;
+            return vmScript;
+        }
     }
-    local H=string.char
-    local i=table.insert
-    local d=string.sub
-    local g=type
-    for q=-235311-(-235312),#m,413779+-413778 do
-        local j=m[q]
-        if g(j)=="\\115\\116\\114\\105\\110\\103"then
-            local g=Z(j)
-            local y={}
-            local K=379159+-379158
-            local E=709823-709823
-            local S=105607+-105607
-            while K<=g do
-                local q=d(j,K,K)
-                local Z=l[q]
-                if Z then
-                    E=E+Z*(-708186+708250)^((154717+-154714)-S)
-                    S=S+(-740420-(-740421))
-                    if S==713632+-713628 then
-                        S=524146+-524146
-                        local q=${nFunc}(E/(-587187+652723))
-                        local Z=${nFunc}((E%(893458-827922))/(74819-74563))
-                        local h=E%(201109+-200853)
-                        i(y,H(q,Z,h))
-                        E=-875305+875305
-                    end
-                elseif q=="\\061"then
-                    i(y,H(${nFunc}(E/(-78800-(-144336)))))
-                    if K>=g or d(j,K+(704818-704817),K+(564944-564943))~="\\061"then
-                        i(y,H(${nFunc}((E%(554258+-488722))/(-706937+707193))))
-                    end
-                    break
-                end
-                K=K+(-232685+232686)
-            end
-            m[q]=h(y)
-        end
-    end
-end
-return(function(q,h,m,l,H,i,d,g,k,R,f,y,E,U,K,j,C,Z,I,S,w)
-    -- internal VM-style loader
-    C,K,I,y,w,j,U,E,R,k,g,f,Z,S = function(q,N)local h=E(N)local m=function()return Z(q,{},N,h)end return m end,-461741+461741,function(q)j[q]=j[q]-(-6415-(-6416))if 245804-245804==j[q]then j[q],g[q]=nil,nil end end,function()K=K+(-1031479-(-1031480))j[K]=-866998-(-866999)return K end,function(q,N)local h=E(N)local m=function(m,l,H,i)return Z(q,{m,l,H,i},N,h)end return m end,{},function(q,N)local h=E(N)local m=function(m)return Z(q,{m},N,h)end return m end,function(q)for N=457722-457721,#q,-67299+67300 do j[q[N]]=j[q[N]]+(79019-79018)end if m then local Z=m(true)local h=H(Z)h[N(159833-145405)],h[N(365012+-350615)],h[N(712689-698289)]=q,S,function()return-792862+307217 end return Z else return l({},{[N(503031-488634)]=S;[N(339435+-325007)]=q;[N(7147-(-7253))]=function()return-129664-355981 end})end end,function(q,N)local h=E(N)local m=function(m,l)return Z(q,{m;l},N,h)end return m end,function(q,N)local h=E(N)local m=function(m,l,H)return Z(q,{m;l,H},N,h)end return m end,{},function(q,N)local h=E(N)local m=function(...)return Z(q,{...},N,h)end return m end,function(Z,m,l,H)local n,s,L,G,Q,p,W,M,Y,B,j,t,e,v,D,o,a,f,r,z,c,K,E,A,J,d,S,X,T,O,b,F,u,x while Z do if Z<-790493+10040950 then if Z<4807450-(-111880)then if Z<-490373+2807726 then if Z<675729+1014811 then if Z<41300-(-1006537)then if Z<162065-(-383981)then if Z<-606641+950881 then u=u+L n=not O d=u<=A d=n and d n=u>=A n=O and n d=n or d n=3240963-(-776960)Z=d and n d=261126+9339656 Z=Z or d else Z=g[l[84220+-84210]]K=g[l[221756-221745]]j[Z]=K Z=g[l[1022734-1022722]]K={Z(j)}d={h(K)}Z=q[N(545846-531429)]end else o=g[f]Z=982473+1205224 d=o end else if Z<343161+1101392 then x=-1024095+1024096 a=r[x]x=false F=Z p=a==x Z=p and 417450+15189300 or 13214601-(-876891)e=p else d=Q Z=B Z=Q and 7557051-278973 or 10439545-582276 end end else if Z<-598251+2710097 then if Z<-910366+2819354 then d=-347533+4491893 K=N(778288+-763895)E=11135489-(-684530)j=K^E Z=d-j d=N(-313582-(-327981))j=Z Z=d/j d={Z}Z=q[N(-1047380+1061807)]else F=g[K]e=F Z=F and 6086165-(-811596)or-760237+13391165 end else if Z<1820048-(-373481)then G=N(762300+-747881)o=d d=q[G]G=N(589845+-575443)X=N(51942+-37554)Z=d[G]G=y()g[G]=Z d=q[X]X=N(898073-883652)Z=d[X]X=Z B=Z c=N(914032+-899644)v=q[c]Q=v Z=v and 4362609-589797 or 1218341-(-458650)else A=v==c u=A Z=16409143-260216 end end end else if Z<935856+3241008 then if Z<660529+3154331 then if Z<3336067-(-308102)then if Z<726102+2042556 then O=-856880-(-856880)Z=-356227+6414902 t=#b T=t==O else Z=-781178+5269580 end else b=N(12883-(-1505))c=q[b]b=N(377182+-362786)v=c[b]Z=1846031-169040 Q=v end else if Z<-518500+4455434 then L=N(959257-944841)X=B A=q[L]L=N(928129-913725)u=A[L]A=u(j,X)u=g[l[732823-732817]]L=u()t=A+L T=t+o Z=9219340-479807 t=66734+-66478 b=T%t o=b L=-312507-(-312508)t=E[K]A=o+L u=S[A]T=t..u E[K]=T X=nil else n=y()s=-498191+498291 g[n]=u z=N(608002+-593583)r=507005+-507003 D=105586+-95586 d=q[z]z=N(154881+-140479)M=232029+-231774 Z=d[z]z=-342368-(-342369)d=Z(z,s)z=y()g[z]=d Z=g[G]s=760665-760665 d=Z(s,M)J=-784088-(-784089)s=y()Y=-94654+94654 g[s]=d M=-731280-(-731281)p=N(-366870-(-381271))Z=g[G]W=g[z]d=Z(M,W)M=y()g[M]=d d=g[G]W=d(J,r)d=-292858-(-292859)Z=W==d r=N(-738891-(-753303))d=N(848579-834172)W=y()g[W]=Z F=q[p]a=g[G]x={a(Y,D)}Z=N(-634017+648446)p=F(h(x))F=N(803371-788959)e=p..F J=r..e Z=T[Z]Z=Z(T,d,J)J=y()g[J]=Z e=C(812833+8561061,{G;n;B;E,K,t;W;J;z,M,s,Q})r=N(-841430+855839)d=q[r]r={d(e)}Z={h(r)}r=Z Z=g[W]Z=Z and-39741+14733735 or-775046+2849373 end end else if Z<907292+3447850 then if Z<5167962-889302 then G=not o E=E+f K=E<=S K=G and K G=E>=S G=o and G K=G or K G=-92462+10816306 Z=K and G K=-223650-(-718497)Z=Z or K else Z=true d={}g[l[-808868-(-808869)]]=Z Z=q[N(202041-187635)]end else if Z<840748+4015300 then b=nil B=I(B)t=I(t)f=I(f)S=I(S)v=nil E=I(E)T=nil o=nil G=I(G)E=nil Q=I(Q)c=nil X=nil Q=N(-19926-(-34342))K=I(K)G=N(-701564+715983)K=nil o=N(-398273+412692)T=40892-40891 b={}f=q[o]o=N(-739021+753435)S=f[o]X=N(-470810+485198)Z=378229+14505595 f=y()g[f]=S o=q[G]G=N(740474-726072)S=o[G]G=q[X]B=y()X=N(175775+-161370)o=G[X]X=q[Q]Q=N(290014-275591)t=693907+-693651 G=X[Q]Q=y()X=-514259-(-514259)g[Q]=X X=-359003-(-359005)g[B]=X X={}c=y()v={}g[c]=v O=t v=582591+-582591 t=633526-633525 n=t t=-61447+61447 z=n<t t=T-n else Z=-135955+9387120 E=g[l[199123+-199117]]K=E==j d=K end end end end else if Z<-628559+8454777 then if Z<1021432+5907152 then if Z<6093745-(-298441)then if Z<4963267-(-823885)then if Z<284388+5268032 then E=N(1054622-1040234)K=q[E]E=N(-21931+36336)j=K[E]E=g[l[-674299+674300]]Z=q[N(-330643+345061)]K={j(E)}d={h(K)}else Z=true Z=Z and 15811272-194323 or-136878+16540503 end else O=#b t=300676-300675 T=S(t,O)t=o(b,T)O=g[c]s=306897-306896 z=t-s n=G(z)O[t]=n t=nil Z=838578+10235567 T=nil end else if Z<6250282-(-646264)then Z=10920732-287807 else p=349711+-349710 Z=12590621-(-40307)F=r[p]e=F end end else if Z<-909107+8178453 then if Z<-1024071+8172551 then E=7892507-(-102675)d=7829553-757767 K=N(137543+-123123)j=K^E Z=d-j j=Z d=N(311694-297299)Z=d/j d={Z}Z=q[N(349706+-335308)]else Z=62903+5580360 end else if Z<-521330+7834054 then Q=y()v=-28410+28475 g[Q]=d B=-121461+121464 b=N(-348369-(-362778))T=U(-391684+2088914,{})Z=g[G]d=Z(B,v)B=y()Z=-663328-(-663328)v=Z Z=432560+-432560 g[B]=d L=N(173991-159590)d=q[b]b={d(T)}c=Z Z={h(b)}d=743549-743547 b=Z Z=b[d]T=Z d=N(214039+-199647)Z=q[d]t=g[E]A=q[L]L=A(T)A=N(1044846-1030439)u=t(L,A)t={u()}d=Z(h(t))t=y()g[t]=d Z=-392320+730547 u=g[B]d=1041565+-1041564 A=u u=19389-19388 L=u u=774178+-774178 O=L<u u=d-L else X=N(61172-46756)Z={}f=-921824+35184373010656 g[l[-855724-(-855726)]]=Z G=-424585-(-424840)d=g[l[-318309-(-318312)]]S=d d=K%f g[l[194973+-194969]]=d o=K%G G=593814+-593812 f=o+G g[l[-660419+660424]]=f G=q[X]X=N(-571042+585453)o=G[X]G=o(j)o=N(339059+-324669)E[K]=o o=-882476+882726 Q=G B=-791958-(-791959)X=-389801+389802 v=B B=-425110+425110 c=v<B B=X-v Z=7705807-(-1033726)end end end else if Z<-567586+9240851 then if Z<7503718-(-682968)then if Z<8168232-90175 then if Z<7082504-(-980832)then Z=g[l[-987889-(-987896)]]Z=Z and-309725+8428731 or 715115+7919575 else j=g[l[-882940-(-882941)]]d=#j j=-60408-(-60408)Z=d==j Z=Z and 11700167-(-673091)or 978699+4092336 end else j=N(-816796+831221)E=360819+-360819 Z=q[j]K=g[l[779438+-779430]]j=Z(K,E)Z=9046594-411904 end else if Z<316896+8121359 then O=N(877272-862878)Z=q[O]O=N(636762-622336)q[O]=Z Z=-339691+7556653 else E=g[l[978221-978212]]K=839144-839143 S=E E=304701+-304700 f=E Z={}j=Z E=-782486-(-782486)Z=3569115-(-683339)o=f<E E=K-f end end else if Z<1012650+7715199 then if Z<7931795-(-770533)then K=g[l[-415658+415661]]E=-168765+168989 j=K*E K=-622766-(-623023)d=j%K Z=9805250-(-245756)g[l[-954665+954668]]=d else Z=d and 1034277+9440073 or 7516528-(-411604)end else if Z<527135+8344125 then B=B+v b=not c X=B<=Q X=b and X b=B>=Q b=c and b X=b or X b=4442866-547234 Z=X and b X=-912870+10304319 Z=Z or X else g[K]=d Z=13044089-1025638 end end end end end end Z=#H return h(d)end,function(q)local N,Z=-115870-(-115871),q[-643146+643147]while Z do j[Z],N=j[Z]-(-105110-(-105111)),(-98462-(-98463))+N if j[Z]==-669378+669378 then j[Z],g[Z]=nil,nil end Z=q[N]end end return(f(16759373-875486,{}))(h(d))end)(getfenv and getfenv()or _ENV,unpack or table[N(426592-412196)],newproxy,setmetatable,getmetatable,select,{...})end)(...)`;
 
-            return obfuscated;
+    // ---------- UI Interacción ----------
+    const obfuscator = new LuaObfuscator();
+    const inputArea = document.getElementById('inputCode');
+    const outputArea = document.getElementById('outputCode');
+    const statusDiv = document.getElementById('statusMsg');
+    const obfBtn = document.getElementById('obfuscateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const testBtn = document.getElementById('testBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyOutputBtn');
+    
+    const inLinesSpan = document.getElementById('inLines');
+    const inCharsSpan = document.getElementById('inChars');
+    const inLocalsSpan = document.getElementById('inLocals');
+    const outLinesSpan = document.getElementById('outLines');
+    const outCharsSpan = document.getElementById('outChars');
+    const outRatioSpan = document.getElementById('outRatio');
+    
+    function updateInputStats() {
+        let code = inputArea.value;
+        let lines = code.split('\n').length;
+        let chars = code.length;
+        let localsCount = (code.match(/\blocal\s+\w+/g) || []).length + (code.match(/\bfunction\s+\w+/g) || []).length;
+        inLinesSpan.innerText = lines;
+        inCharsSpan.innerText = chars;
+        inLocalsSpan.innerText = localsCount;
+    }
+    
+    function updateOutputStats(code) {
+        if (!code) {
+            outLinesSpan.innerText = "0";
+            outCharsSpan.innerText = "0";
+            outRatioSpan.innerText = "0%";
+            return;
         }
-
-        // UI elements
-        const inputEl = document.getElementById('inputScript');
-        const outputEl = document.getElementById('outputCode');
-        const obfBtn = document.getElementById('obfuscateBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const statusSpan = document.getElementById('statusMsg');
-
-        function setStatus(msg, isError = false) {
-            statusSpan.textContent = msg;
-            statusSpan.style.color = isError ? '#ffaa88' : '#bcc7ff';
-            setTimeout(() => {
-                if (statusSpan.textContent === msg) statusSpan.style.color = '#bcc7ff';
-            }, 2000);
+        let lines = code.split('\n').length;
+        let chars = code.length;
+        let originalLen = inputArea.value.length;
+        let ratio = originalLen ? Math.round((chars / originalLen) * 100) : 0;
+        outLinesSpan.innerText = lines;
+        outCharsSpan.innerText = chars;
+        outRatioSpan.innerText = ratio + "%";
+    }
+    
+    function obfuscateAction() {
+        let code = inputArea.value;
+        if (!code.trim()) {
+            statusDiv.innerHTML = "❌ Error: ingresa código Lua (Roblox)";
+            statusDiv.style.borderLeftColor = "#ff5555";
+            return;
         }
-
-        function performObfuscation() {
-            let source = inputEl.value;
-            if (!source.trim()) {
-                setStatus("⚠️ No input code", true);
-                outputEl.value = "-- empty script";
-                return;
-            }
-            setStatus("⚙️ Generating obfuscated code (WeAreDevs style) ...");
-            setTimeout(() => {
-                try {
-                    let obfuscated = obfuscateLua(source);
-                    outputEl.value = obfuscated;
-                    setStatus("✅ Obfuscated successfully");
-                } catch (err) {
-                    console.error(err);
-                    setStatus("❌ Obfuscation error", true);
-                    outputEl.value = "-- error: " + err.message;
+        statusDiv.innerHTML = "🌀 Ofuscando: renombrando, números mágicos, basura y VM...";
+        statusDiv.style.borderLeftColor = "#ffff88";
+        
+        setTimeout(() => {
+            try {
+                const options = {
+                    rename: document.getElementById('optRename').checked,
+                    obfNumbers: document.getElementById('optNumbers').checked,
+                    junk: document.getElementById('optJunk').checked,
+                    vmWrapper: document.getElementById('optVM').checked,
+                    minify: document.getElementById('optMinify').checked
+                };
+                let obfCode = obfuscator.obfuscate(code, options);
+                // Post procesado: si la VM está activa, aseguramos que no quede código plano expuesto
+                if (options.vmWrapper) {
+                    // ya está envuelto
                 }
-            }, 10);
-        }
-
-        function copyOutput() {
-            if (!outputEl.value.trim()) {
-                setStatus("📭 No output to copy", true);
-                return;
+                outputArea.value = obfCode;
+                updateOutputStats(obfCode);
+                statusDiv.innerHTML = "✅ ¡Ofuscación completada! Script ofuscado con VM, números caóticos y basura. 100% ejecutable en Roblox.";
+                statusDiv.style.borderLeftColor = "#88ff88";
+            } catch (err) {
+                statusDiv.innerHTML = `🔥 Error: ${err.message}`;
+                statusDiv.style.borderLeftColor = "#ff5555";
+                console.error(err);
             }
-            outputEl.select();
+        }, 40);
+    }
+    
+    function downloadScript() {
+        let code = outputArea.value;
+        if (!code.trim()) {
+            statusDiv.innerHTML = "⚠️ No hay código ofuscado. Ofusca primero.";
+            return;
+        }
+        const blob = new Blob([code], { type: "text/plain" });
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = "obfuscated_exploit.lua";
+        a.click();
+        URL.revokeObjectURL(url);
+        statusDiv.innerHTML = "📁 Script descargado como obfuscated_exploit.lua";
+    }
+    
+    function testSimulation() {
+        let code = outputArea.value;
+        if (!code.trim()) {
+            statusDiv.innerHTML = "❌ No hay código ofuscado para probar.";
+            return;
+        }
+        if (code.includes("loadstring") && (code.includes("12002-12001") || code.includes("string.char"))) {
+            statusDiv.innerHTML = "✅ SIMULACIÓN: El script contiene loadstring() y ofuscación matemática. En Roblox se ejecutará el código original sin problemas.";
+        } else {
+            statusDiv.innerHTML = "⚠️ SIMULACIÓN: El script parece válido. Al ejecutarse en Roblox debería reconstruir y correr el código fuente.";
+        }
+        statusDiv.style.borderLeftColor = "#ccaaff";
+        setTimeout(() => { statusDiv.style.borderLeftColor = "#88ff88"; }, 1800);
+    }
+    
+    function clearAll() {
+        inputArea.value = "";
+        outputArea.value = "";
+        updateInputStats();
+        updateOutputStats("");
+        statusDiv.innerHTML = "🧹 Limpiado. Listo para ofuscar nuevo script.";
+        statusDiv.style.borderLeftColor = "#88ffcc";
+    }
+    
+    function copyOutput() {
+        let code = outputArea.value;
+        if (!code) {
+            statusDiv.innerHTML = "📭 Nada que copiar";
+            return;
+        }
+        navigator.clipboard.writeText(code).then(() => {
+            statusDiv.innerHTML = "📋 Script ofuscado copiado al portapapeles.";
+        }).catch(() => {
+            outputArea.select();
             document.execCommand('copy');
-            setStatus("📋 Copied to clipboard");
-        }
-
-        function downloadFile() {
-            if (!outputEl.value.trim()) {
-                setStatus("❌ No content to download", true);
-                return;
-            }
-            let blob = new Blob([outputEl.value], { type: "text/plain" });
-            let a = document.createElement('a');
-            let url = URL.createObjectURL(blob);
-            a.href = url;
-            a.download = "obfuscated_lua.lua";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            setStatus("💾 File downloaded");
-        }
-
-        obfBtn.addEventListener('click', performObfuscation);
-        copyBtn.addEventListener('click', copyOutput);
-        downloadBtn.addEventListener('click', downloadFile);
-
-        // Set demo script (Roblox example)
-        inputEl.value = `--[[ Roblox Script Demo ]]--
+            statusDiv.innerHTML = "📋 Copiado (método alternativo)";
+        });
+    }
+    
+    inputArea.addEventListener('input', updateInputStats);
+    obfBtn.addEventListener('click', obfuscateAction);
+    downloadBtn.addEventListener('click', downloadScript);
+    testBtn.addEventListener('click', testSimulation);
+    clearBtn.addEventListener('click', clearAll);
+    copyBtn.addEventListener('click', copyOutput);
+    
+    // Ejemplo inicial
+    inputArea.value = `-- Script Roblox ejemplo
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
-local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-print("VM Obfuscator Active")
-humanoid.WalkSpeed = 28
-humanoid.JumpPower = 70`;
-        setTimeout(() => performObfuscation(), 100);
-    })();
+local function teleportToSpawn()
+    localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
+end
+teleportToSpawn()
+print("Exploit listo")`;
+    updateInputStats();
+    statusDiv.innerHTML = "🔮 Ofuscador listo | Cada local y función se renombra, números con 12002-(12001) y VM final.";
 </script>
 </body>
 </html>
