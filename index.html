@@ -1,231 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ORRXL4 PROTECTOR</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satured Hub Protector</title>
 
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: #00aaff;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
-    }
+<style>
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
 
-    /* ===== SPLASH SCREEN ===== */
-    #splash {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
+/* SPLASH */
+#splash {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
-    #splash h1 {
-      font-size: 32px;
-      text-align: center;
-      animation: glow 1.5s infinite alternate;
-    }
+.loader {
+  margin-top: 20px;
+  width: 200px;
+  height: 5px;
+  background: #111;
+}
 
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #00aaff; }
-      to { text-shadow: 0 0 25px #00ffff; }
-    }
+.loader-bar {
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  animation: load 2s forwards;
+}
 
-    .loader {
-      margin-top: 30px;
-      width: 200px;
-      height: 6px;
-      background: #111;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+@keyframes load {
+  to { width: 100%; }
+}
 
-    .loader-bar {
-      height: 100%;
-      width: 0%;
-      background: #00aaff;
-      animation: load 2.5s forwards;
-    }
+/* MAIN */
+.container {
+  display: none;
+  text-align: center;
+  padding: 20px;
+}
 
-    @keyframes load {
-      to { width: 100%; }
-    }
+/* TEXTBOX (único con color diferente) */
+textarea {
+  width: 90%;
+  height: 150px;
+  background: #111;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+}
 
-    /* ===== MAIN CONTENT ===== */
-    .container {
-      width: 90%;
-      max-width: 500px;
-      margin: 80px auto;
-      text-align: center;
-      display: none;
-    }
+/* BOTONES */
+button {
+  margin-top: 15px;
+  padding: 12px;
+  width: 90%;
+  background: #111;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    textarea {
-      width: 100%;
-      height: 150px;
-      background: #111;
-      border: 1px solid #00aaff;
-      color: #00aaff;
-      padding: 10px;
-      border-radius: 8px;
-      resize: none;
-      box-sizing: border-box;
-    }
+/* BOTÓN DISCORD */
+.discord {
+  background: #5865F2;
+  border: none;
+}
 
-    input[type="file"] {
-      margin-top: 15px;
-      color: white;
-      width: 100%;
-    }
-
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background: #00aaff;
-      border: none;
-      border-radius: 8px;
-      color: black;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #0088cc;
-    }
-
-    .result {
-      margin-top: 25px;
-      word-break: break-all;
-      font-size: 14px;
-    }
-
-    .box {
-      background: #111;
-      border: 1px solid #00aaff;
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 13px;
-      overflow-x: auto;
-    }
-
-    a {
-      color: #00ffcc;
-      text-decoration: none;
-    }
-
-    .copyBtn {
-      margin-top: 10px;
-      background: #00ffcc;
-    }
-
-    .success {
-      margin-top: 10px;
-      color: #00ffcc;
-      font-size: 13px;
-    }
-  </style>
+.result {
+  margin-top: 20px;
+  word-break: break-all;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- SPLASH SCREEN -->
-  <div id="splash">
-    <h1>ORRXL4 PROTECTOR 🔒</h1>
-    <div class="loader">
-      <div class="loader-bar"></div>
-    </div>
+<div id="splash">
+  <h2>Loading...</h2>
+  <div class="loader">
+    <div class="loader-bar"></div>
   </div>
+</div>
 
-  <!-- MAIN CONTENT -->
-  <div class="container" id="mainContent">
-    <h2>ORRXL4 PROTECTOR 🔒</h2>
+<div class="container" id="main">
+  <h2>this code it's protected by Satured hub</h2>
 
-    <textarea id="textInput" placeholder="Paste your Lua script here..."></textarea>
-    <input type="file" id="fileInput" accept=".txt,.lua,.js,.py">
-    <button onclick="generate()">GENERATE LOADSTRING</button>
+  <!-- BOTÓN DISCORD -->
+  <button class="discord" onclick="window.open('https://discord.gg/KfY9ZC23R')">
+    Discord
+  </button>
 
-    <div class="result" id="result"></div>
+  <!-- TEXTBOX -->
+  <textarea id="code" placeholder="Paste your code..."></textarea>
 
-  <script>
-    // Splash screen delay
-    setTimeout(() => {
-      document.getElementById("splash").style.display = "none";
-      document.getElementById("mainContent").style.display = "block";
-    }, 2600);
+  <!-- BOTÓN LOADSTRING -->
+  <button onclick="generate()">Do Loadstring</button>
 
-    async function generate() {
-      const textArea = document.getElementById("textInput");
-      const fileInput = document.getElementById("fileInput");
-      const resultDiv = document.getElementById("result");
+  <div class="result" id="result"></div>
+</div>
 
-      let content = textArea.value;
+<script>
+// splash
+setTimeout(() => {
+  document.getElementById("splash").style.display = "none";
+  document.getElementById("main").style.display = "block";
+}, 2000);
 
-      if (!content && fileInput.files.length > 0) {
-        content = await fileInput.files[0].text();
-      }
+// generar loadstring simple (sin API para evitar errores)
+function generate() {
+  const code = document.getElementById("code").value;
 
-      if (!content) {
-        alert("Write your Lua script or upload a text file");
-        return;
-      }
+  if (!code) {
+    alert("Put code");
+    return;
+  }
 
-      resultDiv.innerHTML = "Generating...";
+  const encoded = btoa(code);
+  const loadstring = `loadstring(game:HttpGet("data:text/plain;base64,${encoded}"))()`;
 
-      try {
-        const response = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          resultDiv.innerHTML = "❌ Error generating";
-          return;
-        }
-
-        const rawUrl = data.raw;
-        const loadingString = `loadstring(game:HttpGet("${rawUrl}"))()`;
-
-        resultDiv.innerHTML = `
-          <div>
-            ✅ <b>Loadstring generated!:</b><br>
-            <a href="${rawUrl}" target="_blank">${rawUrl}</a>
-          </div>
-
-          <div style="margin-top:20px;">
-            🔥 <b>LoadingString:</b>
-            <div class="box" id="loadingBox">${loadingString}</div>
-            <button class="copyBtn" onclick="copyLoading()">COPY</button>
-            <div class="success" id="copyMsg"></div>
-          </div>
-        `;
-
-      } catch (err) {
-        resultDiv.innerHTML = "❌ Connection error";
-      }
-    }
-
-    function copyLoading() {
-      const text = document.getElementById("loadingBox").innerText;
-      navigator.clipboard.writeText(text);
-
-      const msg = document.getElementById("copyMsg");
-      msg.innerText = "✔ Copied to clipboard";
-      setTimeout(() => { msg.innerText = ""; }, 2000);
-    }
-  </script>
+  document.getElementById("result").innerText = loadstring;
+}
+</script>
 
 </body>
 </html>
